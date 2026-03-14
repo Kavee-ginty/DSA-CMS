@@ -306,11 +306,17 @@ waitingQueue[]
 front
 rear
 */
-
-void enqueuePatient()
+void enqueuePatient(int patientID)
 {
-
-}
+   if(rear== 49){
+      printf("The patient queue is full! Patient %d cannot be added to the queue.",patientID);
+      return;}
+    else{
+        rear=rear+1;
+        waitingQueue[rear]=patientID;
+        printf("Patient %d added to the queue successfully \n",patientID);
+    }
+   }
 
 
 
