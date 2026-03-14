@@ -99,7 +99,7 @@ struct Treatment *treatmentHead = NULL;
 
 
 /* ==================================================
-   5. DRUG INVENTORY
+   5. DRUG INVENTORY (DOUBLY LINKED LIST)
    ================================================== */
 
 struct Drug
@@ -108,11 +108,15 @@ struct Drug
     char name[50];
     int quantity;
     float unitPrice;
+
+    struct Drug *prev;
+    struct Drug *next;
 };
 
-struct Drug inventory[100];
-int drugCount = 0;
+/* Head and tail pointers for inventory list */
 
+struct Drug *inventoryHead = NULL;
+struct Drug *inventoryTail = NULL;
 
 
 /* ==================================================
@@ -367,25 +371,109 @@ void queueSize()
    EMERGENCY STACK FUNCTIONS
    ================================================== */
 
+/*
+Function: pushEmergency()
+
+Purpose:
+Add a patient to the emergency stack.
+
+Description:
+This function should insert a patientID onto the top
+of the emergency stack. Emergency patients bypass
+the normal waiting queue and are treated immediately.
+
+The function should increase the top index and store
+the patientID in emergencyStack[top].
+
+Important Variables:
+emergencyStack[] → stack storing emergency patient IDs
+top → index of the top element in the stack
+*/
+
 void pushEmergency()
 {
 
 }
+
+/*
+Function: popEmergency()
+
+Purpose:
+Remove a treated emergency patient.
+
+Description:
+This function removes the patient at the top of the
+emergency stack once treatment is completed.
+
+The function should decrease the top index after
+removing the patient.
+
+Important Variables:
+emergencyStack[]
+top
+*/
 
 void popEmergency()
 {
 
 }
 
+/*
+Function: peekEmergency()
+
+Purpose:
+View the current emergency patient.
+
+Description:
+Displays the patientID currently at the top of the
+emergency stack without removing it.
+
+Important Variables:
+emergencyStack[]
+top
+*/
+
 void peekEmergency()
 {
 
 }
 
+/*
+Function: displayEmergencyStack()
+
+Purpose:
+Display all emergency patients.
+
+Description:
+Traverses the emergency stack from top to bottom
+and displays all patientIDs currently waiting
+for emergency treatment.
+
+Important Variables:
+emergencyStack[]
+top
+*/
+
 void displayEmergencyStack()
 {
 
 }
+
+/*
+Function: isEmergencyEmpty()
+
+Purpose:
+Check whether the emergency stack is empty.
+
+Description:
+This function checks whether any emergency
+patients exist in the stack.
+
+If top == -1 then the stack is empty.
+
+Important Variables:
+top
+*/
 
 void isEmergencyEmpty()
 {
@@ -398,25 +486,106 @@ void isEmergencyEmpty()
    TREATMENT FUNCTIONS
    ================================================== */
 
+/*
+Function: addTreatment()
+
+Purpose:
+Add a treatment record.
+
+Description:
+Creates a new treatment node containing
+treatmentID, patientID, treatment name,
+and cost.
+
+The node should be inserted into the
+treatment linked list.
+
+Important Variables:
+treatmentHead → start of treatment list
+*/
+
 void addTreatment()
 {
 
 }
+
+/*
+Function: deleteTreatment()
+
+Purpose:
+Remove a treatment record.
+
+Description:
+Searches for a treatment using treatmentID
+and removes the corresponding node from
+the linked list.
+
+The links between nodes must be updated
+to maintain list integrity.
+
+Important Variables:
+treatmentHead
+*/
 
 void deleteTreatment()
 {
 
 }
 
+/*
+Function: displayTreatments()
+
+Purpose:
+Display all treatment records.
+
+Description:
+Traverses the linked list starting from
+treatmentHead and prints all treatment
+details.
+
+Important Variables:
+treatmentHead
+*/
+
 void displayTreatments()
 {
 
 }
 
+/*
+Function: searchTreatment()
+
+Purpose:
+Find a treatment record.
+
+Description:
+Searches the linked list for a treatment
+using treatmentID and displays the record
+if found.
+
+Important Variables:
+treatmentHead
+*/
+
 void searchTreatment()
 {
 
 }
+
+/*
+Function: sortTreatmentsByCost()
+
+Purpose:
+Sort treatments based on cost.
+
+Description:
+This function should implement Bubble Sort
+or another sorting method to arrange
+treatments in ascending order of cost.
+
+Important Variables:
+treatmentHead
+*/
 
 void sortTreatmentsByCost()
 {
@@ -429,25 +598,105 @@ void sortTreatmentsByCost()
    DRUG INVENTORY FUNCTIONS
    ================================================== */
 
+/*
+Function: addDrug()
+
+Purpose:
+Insert a new drug into the inventory.
+
+Description:
+Creates a new Drug node containing drugID,
+name, quantity, and unit price.
+
+The node should be inserted into the
+doubly linked list while updating
+prev and next pointers.
+
+Important Variables:
+inventoryHead
+inventoryTail
+*/
+
 void addDrug()
 {
 
 }
+
+/*
+Function: updateDrugStock()
+
+Purpose:
+Update quantity of a drug.
+
+Description:
+Searches the inventory list using drugID
+and updates the available quantity after
+restocking or corrections.
+
+Important Variables:
+inventoryHead
+*/
 
 void updateDrugStock()
 {
 
 }
 
+/*
+Function: searchDrug()
+
+Purpose:
+Find a drug in the inventory.
+
+Description:
+Traverses the doubly linked list to locate
+a drug using drugID or name and displays
+its details.
+
+Important Variables:
+inventoryHead
+*/
+
 void searchDrug()
 {
 
 }
 
+/*
+Function: displayInventory()
+
+Purpose:
+Display all medicines in inventory.
+
+Description:
+Traverses the doubly linked list from
+inventoryHead to inventoryTail and
+prints all drug information.
+
+Important Variables:
+inventoryHead
+inventoryTail
+*/
+
 void displayInventory()
 {
 
 }
+
+/*
+Function: sortDrugsByName()
+
+Purpose:
+Sort drugs alphabetically.
+
+Description:
+Sorts the inventory list based on drug name.
+Nodes may be rearranged or data swapped
+to maintain sorted order.
+
+Important Variables:
+inventoryHead
+*/
 
 void sortDrugsByName()
 {
@@ -460,25 +709,105 @@ void sortDrugsByName()
    PHARMACY ORDER FUNCTIONS
    ================================================== */
 
+/*
+Function: createOrder()
+
+Purpose:
+Record a medicine purchase.
+
+Description:
+Creates a pharmacy order for a patient
+including drug name and quantity.
+
+The order is pushed onto the pharmacyStack.
+
+Important Variables:
+pharmacyStack[]
+pharmacyTop
+*/
+
 void createOrder()
 {
 
 }
+
+/*
+Function: calculatePrice()
+
+Purpose:
+Calculate total order cost.
+
+Description:
+This function retrieves the unit price
+from the inventory and multiplies it
+by the quantity purchased to determine
+the total price.
+
+Important Variables:
+pharmacyStack[]
+inventoryHead
+*/
 
 void calculatePrice()
 {
 
 }
 
+/*
+Function: updateInventoryAfterSale()
+
+Purpose:
+Reduce inventory after medicine sale.
+
+Description:
+After an order is confirmed, this function
+reduces the quantity of the corresponding
+drug in the inventory list.
+
+Important Variables:
+inventoryHead
+*/
+
 void updateInventoryAfterSale()
 {
 
 }
 
+/*
+Function: displayOrders()
+
+Purpose:
+Display pharmacy order history.
+
+Description:
+Prints all pharmacy orders currently
+stored in the pharmacy stack.
+
+Important Variables:
+pharmacyStack[]
+pharmacyTop
+*/
+
 void displayOrders()
 {
 
 }
+
+/*
+Function: cancelLastOrder()
+
+Purpose:
+Undo the most recent pharmacy order.
+
+Description:
+Removes the top element from the
+pharmacy stack and restores inventory
+if necessary.
+
+Important Variables:
+pharmacyStack[]
+pharmacyTop
+*/
 
 void cancelLastOrder()
 {
@@ -486,30 +815,106 @@ void cancelLastOrder()
 }
 
 
-
 /* ==================================================
    BILLING FUNCTIONS
    ================================================== */
+
+/*
+Function: generateBill()
+
+Purpose:
+Create a billing record.
+
+Description:
+Generates a bill for a patient including
+treatment costs and pharmacy purchases.
+
+The bill is stored in the bills array.
+
+Important Variables:
+bills[]
+billCount
+*/
 
 void generateBill()
 {
 
 }
 
+/*
+Function: updatePaymentStatus()
+
+Purpose:
+Update payment information.
+
+Description:
+Allows the payment status of a bill
+to be updated (for example Paid,
+Pending, or Cancelled).
+
+Important Variables:
+bills[]
+billCount
+*/
+
 void updatePaymentStatus()
 {
 
 }
+
+/*
+Function: searchBill()
+
+Purpose:
+Find a specific bill.
+
+Description:
+Searches the bills array using billID
+and displays billing information.
+
+Important Variables:
+bills[]
+billCount
+*/
 
 void searchBill()
 {
 
 }
 
+/*
+Function: displayBills()
+
+Purpose:
+Display all billing records.
+
+Description:
+Prints all bills stored in the bills array.
+
+Important Variables:
+bills[]
+billCount
+*/
+
 void displayBills()
 {
 
 }
+
+/*
+Function: sortBillsByAmount()
+
+Purpose:
+Sort billing records.
+
+Description:
+Uses Bubble Sort to arrange bills
+in ascending order based on amount.
+
+Important Variables:
+bills[]
+billCount
+*/
 
 void sortBillsByAmount()
 {
