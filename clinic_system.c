@@ -21,7 +21,7 @@ the functions assigned to them.
 
 
 /* ==================================================
-   1. PATIENT STRUCTURE
+   1. PATIENT STRUCTURE - Ginodh
    ================================================== */
 
 struct Patient
@@ -65,7 +65,7 @@ int patientCount = 20;
 
 
 /* ==================================================
-   2. WAITING QUEUE
+   2. WAITING QUEUE - Dimanya
    ================================================== */
 
 int waitingQueue[50];
@@ -74,7 +74,7 @@ int rear = -1;
 
 
 /* ==================================================
-   3. EMERGENCY STACK
+   3. EMERGENCY STACK - Dulana
    ================================================== */
 
 int emergencyStack[50];
@@ -82,7 +82,7 @@ int top = -1;
 
 
 /* ==================================================
-   4. TREATMENT LINKED LIST
+   4. TREATMENT LINKED LIST - Dasun
    ================================================== */
 
 struct Treatment
@@ -99,7 +99,7 @@ struct Treatment *treatmentHead = NULL;
 
 
 /* ==================================================
-   5. DRUG INVENTORY (DOUBLY LINKED LIST)
+   5. DRUG INVENTORY (DOUBLY LINKED LIST) - Neleesha
    ================================================== */
 
 struct Drug
@@ -120,7 +120,7 @@ struct Drug *inventoryTail = NULL;
 
 
 /* ==================================================
-   6. PHARMACY ORDERS
+   6. PHARMACY ORDERS - Harsha
    ================================================== */
 
 struct PharmacyOrder
@@ -137,7 +137,7 @@ int pharmacyTop = -1;
 
 
 /* ==================================================
-   7. BILLING STRUCTURE
+   7. BILLING STRUCTURE - Methoo
    ================================================== */
 
 struct Bill
@@ -154,7 +154,7 @@ int billCount = 0;
 
 
 /* ==================================================
-   PATIENT FUNCTIONS
+   PATIENT FUNCTIONS - Ginodh
    ================================================== */
 
 /*
@@ -288,7 +288,7 @@ void sortPatients()
 
 
 /* ==================================================
-   QUEUE FUNCTIONS
+   QUEUE FUNCTIONS - Dimanya
    ================================================== */
 
 /*
@@ -384,7 +384,7 @@ void queueSize()
 
 
 /* ==================================================
-   EMERGENCY STACK FUNCTIONS
+   EMERGENCY STACK FUNCTIONS - Dulana
    ================================================== */
 
 /*
@@ -499,7 +499,7 @@ void isEmergencyEmpty()
 
 
 /* ==================================================
-   TREATMENT FUNCTIONS
+   TREATMENT FUNCTIONS - Dasun
    ================================================== */
 
 /*
@@ -611,7 +611,7 @@ void sortTreatmentsByCost()
 
 
 /* ==================================================
-   DRUG INVENTORY FUNCTIONS
+   DRUG INVENTORY FUNCTIONS - Neleesha
    ================================================== */
 
 /*
@@ -722,7 +722,7 @@ void sortDrugsByName()
 
 
 /* ==================================================
-   PHARMACY ORDER FUNCTIONS
+   PHARMACY ORDER FUNCTIONS - Harsha
    ================================================== */
 
 /*
@@ -832,7 +832,7 @@ void cancelLastOrder()
 
 
 /* ==================================================
-   BILLING FUNCTIONS
+   BILLING FUNCTIONS  - Methoo
    ================================================== */
 
 /*
