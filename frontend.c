@@ -34,12 +34,46 @@ int main()
 
         printf("Enter choice: ");
         scanf("%d",&choice);
+        getchar();
+
+        
+        int patientID;
+        char name[50];
+        int age;
+        char gender[10];
+        char contact[20];
 
 
         switch(choice)
         {
-
-            case 1: addPatient(); break;
+            
+            case 1:
+                printf("Adding new patient...\n");
+                printf("Enter patient details:\n");
+                printf("Patient Name: ");
+                fflush(stdin);
+                fgets(name, sizeof(name), stdin);
+                size_t len = strlen(name);
+                if (len > 0 && name[len - 1] == '\n') {
+                    name[len - 1] = '\0';
+                }
+                printf("Patient Age: ");
+                scanf("%d", &age);
+                getchar(); 
+                printf("Patient Gender [M/F]: ");
+                fgets(gender, sizeof(gender), stdin);
+                len = strlen(gender);
+                if (len > 0 && gender[len - 1] == '\n') {
+                    gender[len - 1] = '\0';
+                }
+                printf("Patient Contact: ");
+                fgets(contact, sizeof(contact), stdin);
+                len = strlen(contact);
+                if (len > 0 && contact[len - 1] == '\n') {
+                    contact[len - 1] = '\0';
+                }
+                addPatient(name, age, gender, contact);
+                break;
             case 2: deletePatient(); break;
             case 3: searchPatient(); break;
             case 4: updatePatient(); break;

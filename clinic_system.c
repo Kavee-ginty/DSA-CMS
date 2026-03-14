@@ -175,8 +175,24 @@ patients[]  → array storing patient records
 patientCount → number of registered patients
 */
 
-void addPatient()
+void addPatient(char name[], int age, char gender[], char contact[])
 {
+      if(patientCount < 40)
+      {
+         patients[patientCount].patientID = patientCount + 1; // Auto ID
+         strcpy(patients[patientCount].name, name);
+         patients[patientCount].age = age;
+         strcpy(patients[patientCount].gender, gender);
+         strcpy(patients[patientCount].contact, contact);
+         patientCount++;
+         printf("Patient added successfully with ID: %d\n", patients[patientCount - 1].patientID);
+      } else {
+         printf("Patient limit reached. Cannot add more patients.\n");
+      }
+      for (int i = 0; i < patientCount; i++) {
+         printf("Patient ID: %d, Name: %s, Age: %d, Gender: %s, Contact: %s\n",
+                patients[i].patientID, patients[i].name, patients[i].age, patients[i].gender, patients[i].contact);
+      }
 
 }
 
