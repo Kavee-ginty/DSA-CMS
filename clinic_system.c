@@ -92,7 +92,7 @@ struct emergencyQueue
    struct emergencyNode* rear;
 };
 
-struct emergencyQueue EMERGENCY_QUUEUE;
+struct emergencyQueue EMERGENCY_QUEUE;
 
 
 

@@ -96,9 +96,9 @@ int main()
                 int emergencyScore;
                 scanf(" %d",&emergencyScore);
                 printf("Inserting...\n");
-                enqueueEmergency(&EMERGENCY_QUUEUE, emergencyPatientID, emergencyScore); 
+                enqueueEmergency(&EMERGENCY_QUEUE, emergencyPatientID, emergencyScore); 
                 printf("Inserted.\nCurrent Queue:\n");
-                displayEmergencyQueue(&EMERGENCY_QUUEUE);
+                displayEmergencyQueue(&EMERGENCY_QUEUE);
                 break;
 
             case 9: addTreatment(); break;
