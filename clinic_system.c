@@ -412,6 +412,10 @@ void initializeEmergencyQueue(struct emergencyQueue* queue)
 struct emergencyNode* createEmergencyNode(int patientID, int emergencyScore)
 {
    struct emergencyNode* newNode = (struct emergencyNode*)malloc(sizeof(struct emergencyNode));
+   if (newNode == NULL)
+   {
+      return NULL;
+   }
    newNode->patientID = patientID;
    newNode->emergencyScore = emergencyScore;
    newNode->prev = NULL;
