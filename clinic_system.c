@@ -577,8 +577,8 @@ Display all patients in the emergency priority queue.
 
 Description:
 Traverses the doubly linked priority queue from
-front to rear and prints each patient's ID and
-emergency score in priority order.
+front to rear and prints each patient's ID
+in priority order.
 
 The front holds the highest priority patient
 and the rear holds the lowest priority patient.
