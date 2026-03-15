@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 /*
@@ -74,11 +75,25 @@ int rear = -1;
 
 
 /* ==================================================
-   3. EMERGENCY STACK - Dulana
+   3. EMERGENCY Queue - Dulana
    ================================================== */
 
-int emergencyStack[50];
-int top = -1;
+struct emergencyNode
+{
+   int patientID;
+   int emergencyScore;
+   struct emergencyNode* prev;
+   struct emergencyNode* next;
+};
+
+struct emergencyQueue
+{
+   struct emergencyNode* front;
+   struct emergencyNode* rear;
+};
+
+struct emergencyQueue EMERGENCY_QUUEUE;
+
 
 
 /* ==================================================
@@ -384,52 +399,144 @@ void queueSize()
 
 
 /* ==================================================
-   EMERGENCY STACK FUNCTIONS - Dulana
+   EMERGENCY QUEUE FUNCTIONS - Dulana
    ================================================== */
 
-/*
-Function: pushEmergency()
-
-Purpose:
-Add a patient to the emergency stack.
-
-Description:
-This function should insert a patientID onto the top
-of the emergency stack. Emergency patients bypass
-the normal waiting queue and are treated immediately.
-
-The function should increase the top index and store
-the patientID in emergencyStack[top].
-
-Important Variables:
-emergencyStack[] → stack storing emergency patient IDs
-top → index of the top element in the stack
-*/
-
-void pushEmergency()
+void initializeEmergencyQueue(struct emergencyQueue* queue)
 {
+   queue->front = NULL;
+   queue->rear = NULL;
+}
 
+
+struct emergencyNode* createEmergencyNode(int patientID, int emergencyScore)
+{
+   struct emergencyNode* newNode = (struct emergencyNode*)malloc(sizeof(struct emergencyNode));
+   newNode->patientID = patientID;
+   newNode->emergencyScore = emergencyScore;
+   newNode->prev = NULL;
+   newNode->next = NULL;
+   return newNode;
 }
 
 /*
-Function: popEmergency()
+Function: isEmergencyEmpty()
 
 Purpose:
-Remove a treated emergency patient.
+Check whether the emergency priority queue is empty.
 
 Description:
-This function removes the patient at the top of the
-emergency stack once treatment is completed.
+This function checks whether any emergency
+patients exist in the priority queue.
 
-The function should decrease the top index after
-removing the patient.
+Returns 1 if the queue is empty (front == NULL),
+returns 0 otherwise.
 
-Important Variables:
-emergencyStack[]
-top
 */
 
-void popEmergency()
+int isEmergencyEmpty(struct emergencyQueue* queue)
+{
+   if(queue->front == NULL){
+      return 1;
+   }
+   else{
+      return 0;
+   }
+}
+
+/*
+Function: enqueueEmergency()
+
+Purpose:
+Add a patient to the emergency priority queue.
+
+Description:
+This function inserts a patient into the doubly linked
+priority queue based on their emergency score (1-3).
+Higher scores indicate higher priority and are placed
+closer to the front of the queue.
+
+Patients with the same priority are placed behind
+existing patients of the same score.
+
+Emergency Score Guide:
+3 → Critical   (highest priority)
+2 → Urgent
+1 → Non-Urgent     (lowest priority)
+
+*/
+
+void enqueueEmergency(struct emergencyQueue* queue, int patientID, int emergencyScore)
+{
+   struct emergencyNode* newNode;
+   newNode = createEmergencyNode(patientID, emergencyScore);
+   //empty queue
+   if (isEmergencyEmpty(queue) == 1){
+      queue->front = newNode;
+      queue->rear = newNode;
+      return;
+   }
+
+   //non emepty queue
+   struct emergencyNode* temp;
+   temp = queue->rear;
+   int enqueued = 0;
+   while(!enqueued){
+      if(emergencyScore > 3 || emergencyScore < 1){
+         printf("Invalid Emeregency Condition");
+         return;
+      }
+      if(emergencyScore > temp->emergencyScore){
+         // if temp has reached to front and want to add node to the front
+         if(temp == queue->front){
+            temp->prev = newNode;
+            newNode->next = temp;
+            queue->front = newNode;
+            enqueued = 1;
+         }
+         else{
+             temp = temp->prev;
+         }
+      }
+      else{
+         //if new node is going to be attached to the rear
+         if(temp == queue->rear){
+            newNode->prev = temp;
+            temp->next = newNode;
+            queue->rear = newNode;
+            enqueued = 1;
+         }
+         else{
+            newNode->next = temp->next;
+            newNode->prev = temp;
+            temp->next->prev = newNode;
+            temp->next = newNode;
+            enqueued = 1;
+         }
+      }
+   }
+}
+
+/*
+Function: dequeueEmergency()
+
+Purpose:
+Remove and return the highest priority emergency patient.
+
+Description:
+This function removes the patient at the front of the
+emergency priority queue, which is always the patient
+with the highest emergency score.
+
+The front pointer is updated to the next node after
+removal. Memory of the removed node is freed.
+
+Important Variables:
+queue->front
+queue->rear
+*/
+
+void dequeueEmergency()
 {
 
 }
@@ -438,15 +545,18 @@ void popEmergency()
 Function: peekEmergency()
 
 Purpose:
-View the current emergency patient.
+View the highest priority emergency patient.
 
 Description:
-Displays the patientID currently at the top of the
-emergency stack without removing it.
+Displays the patientID and emergency score of the
+patient currently at the front of the priority queue
+without removing them.
+
+The front of the queue always holds the patient
+with the highest emergency score.
 
 Important Variables:
-emergencyStack[]
-top
+queue->front
 */
 
 void peekEmergency()
@@ -455,46 +565,39 @@ void peekEmergency()
 }
 
 /*
-Function: displayEmergencyStack()
+Function: displayEmergencyQueue()
 
 Purpose:
-Display all emergency patients.
+Display all patients in the emergency priority queue.
 
 Description:
-Traverses the emergency stack from top to bottom
-and displays all patientIDs currently waiting
-for emergency treatment.
+Traverses the doubly linked priority queue from
+front to rear and prints each patient's ID and
+emergency score in priority order.
+
+The front holds the highest priority patient
+and the rear holds the lowest priority patient.
 
 Important Variables:
-emergencyStack[]
-top
+queue->front
+queue->rear
 */
 
-void displayEmergencyStack()
+void displayEmergencyQueue(struct emergencyQueue* queue)
 {
-
+   if(isEmergencyEmpty(queue) == 1){
+      printf("Emergency Queue is empty.\n");
+   }
+   else{
+      struct emergencyNode* temp = queue->front;
+      while(temp != NULL){
+         printf("Emergency Patient ID: %d\n", temp->patientID);
+         temp = temp->next;
+      }
+   }
 }
 
-/*
-Function: isEmergencyEmpty()
 
-Purpose:
-Check whether the emergency stack is empty.
-
-Description:
-This function checks whether any emergency
-patients exist in the stack.
-
-If top == -1 then the stack is empty.
-
-Important Variables:
-top
-*/
-
-void isEmergencyEmpty()
-{
-
-}
 
 
 

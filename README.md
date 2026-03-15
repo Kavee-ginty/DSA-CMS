@@ -1,4 +1,5 @@
 (existing code...)
+
 # Clinic Management System (C – Data Structures Project)
 
 ## Project Overview
@@ -23,7 +24,7 @@ The main objective is to demonstrate how **different data structures can model r
 
 1. Patients are **registered** and stored in the **Patient Records array**.
 2. When they arrive at the clinic, they are added to the **Waiting Queue**.
-3. If a patient has an emergency, they are pushed into the **Emergency Stack** and treated first.
+3. If a patient has an emergency, they are pushed into the **Emergency queue** and treated first.
 4. The doctor records treatments in the **Treatment Linked List**.
 5. If medicines are prescribed, a **Pharmacy Order** is created.
 6. The system checks the **Drug Inventory (Doubly Linked List)** to get price and update stock.
@@ -33,15 +34,15 @@ The main objective is to demonstrate how **different data structures can model r
 
 ## Data Structures Used
 
-| Module            | Data Structure        | Reason                                 |
-|-------------------|----------------------|-----------------------------------------|
-| Patient Records   | Array                | Fast access and fixed capacity          |
-| Waiting Queue     | Queue                | First-Come-First-Serve patient handling |
-| Emergency Cases   | Stack                | Immediate handling of urgent cases      |
-| Treatment Records | Singly Linked List   | Dynamic number of treatments            |
-| Drug Inventory    | Doubly Linked List   | Efficient insertion, deletion, traversal|
-| Pharmacy Orders   | Stack                | Track most recent transactions          |
-| Billing Records   | Array                | Simple storage and easy sorting         |
+| Module            | Data Structure     | Reason                                   |
+| ----------------- | ------------------ | ---------------------------------------- |
+| Patient Records   | Array              | Fast access and fixed capacity           |
+| Waiting Queue     | Queue              | First-Come-First-Serve patient handling  |
+| Emergency Cases   | Priority Queue     | Immediate handling of urgent cases       |
+| Treatment Records | Singly Linked List | Dynamic number of treatments             |
+| Drug Inventory    | Doubly Linked List | Efficient insertion, deletion, traversal |
+| Pharmacy Orders   | Stack              | Track most recent transactions           |
+| Billing Records   | Array              | Simple storage and easy sorting          |
 
 ---
 
@@ -62,7 +63,9 @@ clinic-management-system/
 Each team member is responsible for implementing **one data structure module**.
 
 ### Patient Management
+
 Functions:
+
 - addPatient()
 - deletePatient()
 - searchPatient()
@@ -70,23 +73,29 @@ Functions:
 - sortPatients()
 
 ### Waiting Queue
+
 Functions:
+
 - enqueuePatient()
 - dequeuePatient()
 - peekNextPatient()
 - displayQueue()
 - queueSize()
 
-### Emergency Stack
+### Emergency Queue
+
 Functions:
-- pushEmergency()
-- popEmergency()
+
+- enqueueEmergency()
+- dequeueEmergency()
 - peekEmergency()
-- displayEmergencyStack()
+- displayEmergencyQueue()
 - isEmergencyEmpty()
 
 ### Treatment Records
+
 Functions:
+
 - addTreatment()
 - deleteTreatment()
 - displayTreatments()
@@ -94,7 +103,9 @@ Functions:
 - sortTreatmentsByCost()
 
 ### Drug Inventory
+
 Functions:
+
 - addDrug()
 - updateDrugStock()
 - searchDrug()
@@ -102,7 +113,9 @@ Functions:
 - sortDrugsByName()
 
 ### Pharmacy Orders
+
 Functions:
+
 - createOrder()
 - calculatePrice()
 - updateInventoryAfterSale()
@@ -110,7 +123,9 @@ Functions:
 - cancelLastOrder()
 
 ### Billing System
+
 Functions:
+
 - generateBill()
 - updatePaymentStatus()
 - searchBill()
@@ -122,11 +137,13 @@ Functions:
 ## Sorting Algorithms Used
 
 The following sorting algorithms are implemented across modules:
+
 - **Bubble Sort**
 - **Selection Sort**
 - **Insertion Sort**
 
 These are used to sort:
+
 - Patients
 - Treatments
 - Drug inventory
@@ -162,3 +179,4 @@ Compile the backend and frontend files together:
 \`\`\`bash
 
 gcc clinic\_system.c frontend.c -o clinic
+```

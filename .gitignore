@@ -1,0 +1,30 @@
+# Build outputs
+*.exe
+*.out
+*.app
+*.i*
+
+# Object and library files
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+
+# Debug and crash artifacts
+*.dSYM/
+*.stackdump
+*.log
+
+# Editor temp files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+# VS Code local workspace files
+.vscode/*
+!.vscode/tasks.json

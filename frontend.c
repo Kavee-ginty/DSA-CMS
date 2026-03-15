@@ -8,6 +8,7 @@ int main()
 {
 
     int choice;
+    initializeEmergencyQueue(&EMERGENCY_QUUEUE);
 
     while(1)
     {
@@ -82,7 +83,23 @@ int main()
             case 6: enqueuePatient(); break;
             case 7: dequeuePatient(); break;
 
-            case 8: pushEmergency(); break;
+            case 8: 
+                printf("--INSERT PATIENT TO EMERGENCY PRIORITY QUEUE--\n");
+                printf("Enter Emergency Patient ID: ");
+                int emergencyPatientID;
+                scanf(" %d", &emergencyPatientID);
+                if(emergencyPatientID < 1 || emergencyPatientID > patientCount){
+                    printf("Invalid ID\n");
+                    break;
+                }
+                printf("Enter Emergency condition:\nCritical: 3\nUrgent: 2\nNon-Urgent: 1\n");
+                int emergencyScore;
+                scanf(" %d",&emergencyScore);
+                printf("Inserting...\n");
+                enqueueEmergency(&EMERGENCY_QUUEUE, emergencyPatientID, emergencyScore); 
+                printf("Inserted.\nCurrent Queue:\n");
+                displayEmergencyQueue(&EMERGENCY_QUUEUE);
+                break;
 
             case 9: addTreatment(); break;
 
