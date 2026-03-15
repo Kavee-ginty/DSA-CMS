@@ -472,6 +472,11 @@ Emergency Score Guide:
 
 void enqueueEmergency(struct emergencyQueue* queue, int patientID, int emergencyScore)
 {
+   if (emergencyScore > 3 || emergencyScore < 1) {
+      printf("Invalid Emeregency Condition");
+      return;
+   }
+
    struct emergencyNode* newNode;
    newNode = createEmergencyNode(patientID, emergencyScore);
    //empty queue
@@ -486,10 +491,6 @@ void enqueueEmergency(struct emergencyQueue* queue, int patientID, int emergency
    temp = queue->rear;
    int enqueued = 0;
    while(!enqueued){
-      if(emergencyScore > 3 || emergencyScore < 1){
-         printf("Invalid Emeregency Condition");
-         return;
-      }
       if(emergencyScore > temp->emergencyScore){
          // if temp has reached to front and want to add node to the front
          if(temp == queue->front){
