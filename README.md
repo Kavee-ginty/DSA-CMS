@@ -24,7 +24,7 @@ The main objective is to demonstrate how **different data structures can model r
 
 1. Patients are **registered** and stored in the **Patient Records array**.
 2. When they arrive at the clinic, they are added to the **Waiting Queue**.
-3. If a patient has an emergency, they are pushed into the **Emergency queue** and treated first.
+3. If a patient has an emergency, they are enqueued into the **Emergency queue** and treated first.
 4. The doctor records treatments in the **Treatment Linked List**.
 5. If medicines are prescribed, a **Pharmacy Order** is created.
 6. The system checks the **Drug Inventory (Doubly Linked List)** to get price and update stock.
