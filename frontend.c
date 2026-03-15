@@ -8,7 +8,7 @@ int main()
 {
 
     int choice;
-    initializeEmergencyQueue(&EMERGENCY_QUUEUE);
+    initializeEmergencyQueue(&EMERGENCY_QUEUE);
 
     while(1)
     {
