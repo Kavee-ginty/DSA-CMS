@@ -94,7 +94,14 @@ int main()
                 }
                 printf("Enter Emergency condition:\nCritical: 3\nUrgent: 2\nNon-Urgent: 1\n");
                 int emergencyScore;
-                scanf(" %d",&emergencyScore);
+                if (scanf(" %d", &emergencyScore) != 1) {
+                    printf("Invalid emergency condition input\n");
+                    break;
+                }
+                if (emergencyScore < 1 || emergencyScore > 3) {
+                    printf("Invalid emergency condition score. Please enter 1, 2, or 3.\n");
+                    break;
+                }
                 printf("Inserting...\n");
                 enqueueEmergency(&EMERGENCY_QUEUE, emergencyPatientID, emergencyScore); 
                 printf("Inserted.\nCurrent Queue:\n");
