@@ -165,18 +165,4 @@ Compile the backend and frontend files together:
 
 ```bash
 gcc clinic_system.c frontend.c -o clinic
-(existing code...)
-The system initializes with \*\*20 preloaded patient records\*\* and space for \*\*20 additional patients\*\*.
-
-This allows immediate testing of the system without entering data manually.
-
-\---
-
-\# Compilation
-
-Compile the backend and frontend files together:
-
-\`\`\`bash
-
-gcc clinic\_system.c frontend.c -o clinic
 ```
