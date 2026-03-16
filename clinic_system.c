@@ -858,23 +858,25 @@ pharmacyStack[]
 pharmacyTop
 */
 
-void createOrder() {
+void calculatePrice(int orderIndex, char drugName[], int quantity, float *totalPrice);
+void updateInventoryAfterSale(char drugName[], int quantity);
+
+void createOrder(int pID, char dName[], int qty) {
     if (pharmacyTop >= 49) {
         printf("Pharmacy Stack Overflow! Cannot add more orders.\n");
         return;
     }
 
     pharmacyTop++;
-    printf("Enter Patient ID: ");
-    scanf("%d", &pharmacyStack[pharmacyTop].patientID);
-    printf("Enter Drug Name: ");
-    scanf("%s", pharmacyStack[pharmacyTop].drugName);
-    printf("Enter Quantity: ");
-    scanf("%d", &pharmacyStack[pharmacyTop].quantity);
+    pharmacyStack[pharmacyTop].patientID = pID;
+    strcpy(pharmacyStack[pharmacyTop].drugName, dName);
+    pharmacyStack[pharmacyTop].quantity = qty;
+    pharmacyStack[pharmacyTop].totalPrice = 0.0;
 
-    // After creating, we must calculate the price and update stock
-    calculatePrice();
-    updateInventoryAfterSale();
+    calculatePrice(pharmacyTop, dName, qty, &pharmacyStack[pharmacyTop].totalPrice);
+    updateInventoryAfterSale(dName, qty);
+    
+    printf("Order created successfully.\n");
 } 
 
 
@@ -896,23 +898,24 @@ pharmacyStack[]
 inventoryHead
 */
 
-void calculatePrice() {
+void calculatePrice(int orderIndex, char drugName[], int quantity, float *totalPrice) {
+    if (orderIndex < 0) return;
     struct Drug *temp = inventoryHead;
     int found = 0;
-
+    
     while (temp != NULL) {
-        if (strcmp(temp->name, pharmacyStack[pharmacyTop].drugName) == 0) {
-            pharmacyStack[pharmacyTop].totalPrice = temp->unitPrice * pharmacyStack[pharmacyTop].quantity;
-            printf("Total Price Calculated: %.2f\n", pharmacyStack[pharmacyTop].totalPrice);
+        if (strcmp(temp->name, drugName) == 0) {
+            *totalPrice = temp->unitPrice * quantity;
+            printf("Total Price Calculated: Rs. %.2f\n", *totalPrice);
             found = 1;
             break;
         }
         temp = temp->next;
     }
-      if (!found) {
-         printf("Drug not found in inventory. Please check the drug name.\n");
-         pharmacyTop--; // Remove the order since it's invalid
-      }
+    
+    if (!found) {
+        printf("Drug '%s' not found in inventory. Price set to 0.00.\n", drugName);
+    }
 }
 
 /*
@@ -930,20 +933,28 @@ Important Variables:
 inventoryHead
 */
 
-void updateInventoryAfterSale() {
+void updateInventoryAfterSale(char drugName[], int quantity) {
     struct Drug *temp = inventoryHead;
+    int found = 0;
+    
     while (temp != NULL) {
-        if (strcmp(temp->name, pharmacyStack[pharmacyTop].drugName) == 0) {
-            if (temp->quantity >= pharmacyStack[pharmacyTop].quantity) {
-                temp->quantity -= pharmacyStack[pharmacyTop].quantity;
-                printf("Inventory updated. Remaining %s: %d\n", temp->name, temp->quantity);
+        if (strcmp(temp->name, drugName) == 0) {
+            if (temp->quantity >= quantity) {
+                temp->quantity -= quantity;
+                printf("Inventory updated. '%s' remaining stock: %d\n", temp->name, temp->quantity);
             } else {
-                printf("Alert: Not enough stock! Inventory is now negative.\n");
-                temp->quantity -= pharmacyStack[pharmacyTop].quantity;
+                printf("Warning: Not enough stock! Inventory will be negative.\n");
+                temp->quantity -= quantity;
+                printf("Inventory updated. '%s' remaining stock: %d\n", temp->name, temp->quantity);
             }
-            return;
+            found = 1;
+            break;
         }
         temp = temp->next;
+    }
+    
+    if (!found) {
+        printf("Warning: Inventory not updated because drug was not found.\n");
     }
 }
 
@@ -970,9 +981,12 @@ void displayOrders() {
 
     printf("\n--- Pharmacy Order History ---\n");
     for (int i = pharmacyTop; i >= 0; i--) {
-        printf("Order %d: Patient %d | Drug: %s | Qty: %d | Total: %.2f\n", 
-                i + 1, pharmacyStack[i].patientID, pharmacyStack[i].drugName, 
-                pharmacyStack[i].quantity, pharmacyStack[i].totalPrice);
+        printf("Order %d | Patient ID: %d | Drug: %s | Qty: %d | Total Price: Rs. %.2f\n",
+               i + 1,
+               pharmacyStack[i].patientID,
+               pharmacyStack[i].drugName,
+               pharmacyStack[i].quantity,
+               pharmacyStack[i].totalPrice);
     }
 }
 
@@ -997,19 +1011,18 @@ void cancelLastOrder() {
         return;
     }
 
-    // Restore stock before removing
     struct Drug *temp = inventoryHead;
     while (temp != NULL) {
         if (strcmp(temp->name, pharmacyStack[pharmacyTop].drugName) == 0) {
             temp->quantity += pharmacyStack[pharmacyTop].quantity;
-            printf("Stock restored for %s.\n", temp->name);
+            printf("Restored stock for '%s'. Current stock: %d\n", temp->name, temp->quantity);
             break;
         }
         temp = temp->next;
     }
 
-    printf("Order for Patient %d cancelled successfully.\n", pharmacyStack[pharmacyTop].patientID);
-    pharmacyTop--; // The "Pop" operation
+    printf("Order for Patient ID %d cancelled successfully.\n", pharmacyStack[pharmacyTop].patientID);
+    pharmacyTop--;
 }
 
 /* ==================================================
@@ -1229,8 +1242,45 @@ int main()
 
             case 9: addTreatment(); break;
 
-            case 10: createOrder(); break;
+            case 10: 
+            {
+                int pharmacyChoice;
+                printf("\n--- Pharmacy & Inventory ---\n");
+                printf("1 Add Drug (Inventory)\n");
+                printf("2 Update Drug Stock (Inventory)\n");
+                printf("3 Create Pharmacy Order\n");
+                printf("4 Display Pharmacy Orders\n");
+                printf("5 Cancel Last Pharmacy Order\n");
+                printf("0 Back\n");
+                printf("Enter choice: ");
+                scanf("%d", &pharmacyChoice);
+                getchar();
 
+                switch(pharmacyChoice)
+                {
+                    case 1: addDrug(); break;
+                    case 2: updateDrugStock(); break;
+                    case 3: 
+                    {
+                        int pID, qty;
+                        char dName[50];
+                        printf("Enter Patient ID: ");
+                        scanf("%d", &pID);
+                        printf("Enter Drug Name: ");
+                        scanf("%s", dName);
+                        printf("Enter Quantity: ");
+                        scanf("%d", &qty);
+                        createOrder(pID, dName, qty);
+                        break;
+                    }
+                    case 4: displayOrders(); break;
+                    case 5: cancelLastOrder(); break;
+                    case 0: break;
+                    default: printf("Invalid choice\n");
+                }
+                break;
+            }
+          
             case 11: generateBill(); break;
 
             case 0: return 0;
