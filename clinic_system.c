@@ -858,11 +858,26 @@ pharmacyStack[]
 pharmacyTop
 */
 
-void createOrder()
-{
-   int 
+void createOrder() {
+    if (pharmacyTop >= 49) {
+        printf("Pharmacy Stack Overflow! Cannot add more orders.\n");
+        return;
+    }
 
-}
+    pharmacyTop++;
+    printf("Enter Patient ID: ");
+    scanf("%d", &pharmacyStack[pharmacyTop].patientID);
+    printf("Enter Drug Name: ");
+    scanf("%s", pharmacyStack[pharmacyTop].drugName);
+    printf("Enter Quantity: ");
+    scanf("%d", &pharmacyStack[pharmacyTop].quantity);
+
+    // After creating, we must calculate the price and update stock
+    calculatePrice();
+    updateInventoryAfterSale();
+} 
+
+
 
 /*
 Function: calculatePrice()
@@ -881,9 +896,23 @@ pharmacyStack[]
 inventoryHead
 */
 
-void calculatePrice()
-{
+void calculatePrice() {
+    struct Drug *temp = inventoryHead;
+    int found = 0;
 
+    while (temp != NULL) {
+        if (strcmp(temp->name, pharmacyStack[pharmacyTop].drugName) == 0) {
+            pharmacyStack[pharmacyTop].totalPrice = temp->unitPrice * pharmacyStack[pharmacyTop].quantity;
+            printf("Total Price Calculated: %.2f\n", pharmacyStack[pharmacyTop].totalPrice);
+            found = 1;
+            break;
+        }
+        temp = temp->next;
+    }
+      if (!found) {
+         printf("Drug not found in inventory. Please check the drug name.\n");
+         pharmacyTop--; // Remove the order since it's invalid
+      }
 }
 
 /*
@@ -901,9 +930,21 @@ Important Variables:
 inventoryHead
 */
 
-void updateInventoryAfterSale()
-{
-
+void updateInventoryAfterSale() {
+    struct Drug *temp = inventoryHead;
+    while (temp != NULL) {
+        if (strcmp(temp->name, pharmacyStack[pharmacyTop].drugName) == 0) {
+            if (temp->quantity >= pharmacyStack[pharmacyTop].quantity) {
+                temp->quantity -= pharmacyStack[pharmacyTop].quantity;
+                printf("Inventory updated. Remaining %s: %d\n", temp->name, temp->quantity);
+            } else {
+                printf("Alert: Not enough stock! Inventory is now negative.\n");
+                temp->quantity -= pharmacyStack[pharmacyTop].quantity;
+            }
+            return;
+        }
+        temp = temp->next;
+    }
 }
 
 /*
@@ -921,9 +962,18 @@ pharmacyStack[]
 pharmacyTop
 */
 
-void displayOrders()
-{
+void displayOrders() {
+    if (pharmacyTop == -1) {
+        printf("No pharmacy orders to display.\n");
+        return;
+    }
 
+    printf("\n--- Pharmacy Order History ---\n");
+    for (int i = pharmacyTop; i >= 0; i--) {
+        printf("Order %d: Patient %d | Drug: %s | Qty: %d | Total: %.2f\n", 
+                i + 1, pharmacyStack[i].patientID, pharmacyStack[i].drugName, 
+                pharmacyStack[i].quantity, pharmacyStack[i].totalPrice);
+    }
 }
 
 /*
@@ -941,12 +991,26 @@ Important Variables:
 pharmacyStack[]
 pharmacyTop
 */
+void cancelLastOrder() {
+    if (pharmacyTop == -1) {
+        printf("No orders to cancel.\n");
+        return;
+    }
 
-void cancelLastOrder()
-{
+    // Restore stock before removing
+    struct Drug *temp = inventoryHead;
+    while (temp != NULL) {
+        if (strcmp(temp->name, pharmacyStack[pharmacyTop].drugName) == 0) {
+            temp->quantity += pharmacyStack[pharmacyTop].quantity;
+            printf("Stock restored for %s.\n", temp->name);
+            break;
+        }
+        temp = temp->next;
+    }
 
+    printf("Order for Patient %d cancelled successfully.\n", pharmacyStack[pharmacyTop].patientID);
+    pharmacyTop--; // The "Pop" operation
 }
-
 
 /* ==================================================
    BILLING FUNCTIONS  - Methoo
