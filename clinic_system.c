@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-
 /*
 ====================================================
 CLINIC MANAGEMENT SYSTEM - CORE BACKEND FILE
@@ -22,50 +20,45 @@ the functions assigned to them.
 ====================================================
 */
 
-
 /* ==================================================
    1. PATIENT STRUCTURE - Ginodh
    ================================================== */
 
 struct Patient
 {
-    int patientID;
-    char name[50];
-    int age;
-    char gender[10];
-    char contact[20];
+   int patientID;
+   char name[50];
+   int age;
+   char gender[10];
+   char contact[20];
 };
-
 
 /* 20 existing patients + space for 20 more */
 
 struct Patient patients[40] =
-{
-    {1,"Alice",25,"F","0711111111"},
-    {2,"Bob",30,"M","0711111112"},
-    {3,"Charlie",28,"M","0711111113"},
-    {4,"Diana",32,"F","0711111114"},
-    {5,"Ethan",40,"M","0711111115"},
-    {6,"Fiona",22,"F","0711111116"},
-    {7,"George",35,"M","0711111117"},
-    {8,"Hannah",29,"F","0711111118"},
-    {9,"Ian",31,"M","0711111119"},
-    {10,"Jane",26,"F","0711111120"},
-    {11,"Kevin",38,"M","0711111121"},
-    {12,"Lily",24,"F","0711111122"},
-    {13,"Mike",45,"M","0711111123"},
-    {14,"Nina",27,"F","0711111124"},
-    {15,"Oscar",36,"M","0711111125"},
-    {16,"Paula",34,"F","0711111126"},
-    {17,"Quinn",33,"M","0711111127"},
-    {18,"Rita",28,"F","0711111128"},
-    {19,"Sam",41,"M","0711111129"},
-    {20,"Tina",23,"F","0711111130"}
-};
+    {
+        {1, "Alice", 25, "F", "0711111111"},
+        {2, "Bob", 30, "M", "0711111112"},
+        {3, "Charlie", 28, "M", "0711111113"},
+        {4, "Diana", 32, "F", "0711111114"},
+        {5, "Ethan", 40, "M", "0711111115"},
+        {6, "Fiona", 22, "F", "0711111116"},
+        {7, "George", 35, "M", "0711111117"},
+        {8, "Hannah", 29, "F", "0711111118"},
+        {9, "Ian", 31, "M", "0711111119"},
+        {10, "Jane", 26, "F", "0711111120"},
+        {11, "Kevin", 38, "M", "0711111121"},
+        {12, "Lily", 24, "F", "0711111122"},
+        {13, "Mike", 45, "M", "0711111123"},
+        {14, "Nina", 27, "F", "0711111124"},
+        {15, "Oscar", 36, "M", "0711111125"},
+        {16, "Paula", 34, "F", "0711111126"},
+        {17, "Quinn", 33, "M", "0711111127"},
+        {18, "Rita", 28, "F", "0711111128"},
+        {19, "Sam", 41, "M", "0711111129"},
+        {20, "Tina", 23, "F", "0711111130"}};
 
 int patientCount = 20;
-
-
 
 /* ==================================================
    2. WAITING QUEUE - Dimanya
@@ -75,7 +68,6 @@ int waitingQueue[50];
 int front = -1;
 int rear = -1;
 
-
 /* ==================================================
    3. EMERGENCY Queue - Dulana
    ================================================== */
@@ -84,19 +76,17 @@ struct emergencyNode
 {
    int patientID;
    int emergencyScore;
-   struct emergencyNode* prev;
-   struct emergencyNode* next;
+   struct emergencyNode *prev;
+   struct emergencyNode *next;
 };
 
 struct emergencyQueue
 {
-   struct emergencyNode* front;
-   struct emergencyNode* rear;
+   struct emergencyNode *front;
+   struct emergencyNode *rear;
 };
 
 struct emergencyQueue EMERGENCY_QUEUE;
-
-
 
 /* ==================================================
    4. TREATMENT LINKED LIST - Dasun
@@ -104,16 +94,14 @@ struct emergencyQueue EMERGENCY_QUEUE;
 
 struct Treatment
 {
-    int treatmentID;
-    int patientID;
-    char treatmentName[50];
-    float cost;
-    struct Treatment *next;
+   int treatmentID;
+   int patientID;
+   char treatmentName[50];
+   float cost;
+   struct Treatment *next;
 };
 
 struct Treatment *treatmentHead = NULL;
-
-
 
 /* ==================================================
    5. DRUG INVENTORY (DOUBLY LINKED LIST) - Neleesha
@@ -121,13 +109,13 @@ struct Treatment *treatmentHead = NULL;
 
 struct Drug
 {
-    int drugID;
-    char name[50];
-    int quantity;
-    float unitPrice;
+   int drugID;
+   char name[50];
+   int quantity;
+   float unitPrice;
 
-    struct Drug *prev;
-    struct Drug *next;
+   struct Drug *prev;
+   struct Drug *next;
 };
 
 /* Head and tail pointers for inventory list */
@@ -135,23 +123,20 @@ struct Drug
 struct Drug *inventoryHead = NULL;
 struct Drug *inventoryTail = NULL;
 
-
 /* ==================================================
    6. PHARMACY ORDERS - Harsha
    ================================================== */
 
 struct PharmacyOrder
 {
-    int patientID;
-    char drugName[50];
-    int quantity;
-    float totalPrice;
+   int patientID;
+   char drugName[50];
+   int quantity;
+   float totalPrice;
 };
 
 struct PharmacyOrder pharmacyStack[50];
 int pharmacyTop = -1;
-
-
 
 /* ==================================================
    7. BILLING STRUCTURE - Methoo
@@ -159,16 +144,14 @@ int pharmacyTop = -1;
 
 struct Bill
 {
-    int billID;
-    int patientID;
-    float amount;
-    char paymentStatus[20];
+   int billID;
+   int patientID;
+   float amount;
+   char paymentStatus[20];
 };
 
 struct Bill bills[100];
 int billCount = 0;
-
-
 
 /* ==================================================
    PATIENT FUNCTIONS - Ginodh
@@ -194,26 +177,26 @@ patientCount → number of registered patients
 
 void addPatient(char name[], int age, char gender[], char contact[])
 {
-      if(patientCount < 40)
-      {
-         patients[patientCount].patientID = patientCount + 1; // Auto ID
-         strcpy(patients[patientCount].name, name);
-         patients[patientCount].age = age;
-         strcpy(patients[patientCount].gender, gender);
-         strcpy(patients[patientCount].contact, contact);
-         patientCount++;
-         printf("Patient added successfully with ID: %d\n", patients[patientCount - 1].patientID);
-      } else {
-         printf("Patient limit reached. Cannot add more patients.\n");
-      }
-      for (int i = 0; i < patientCount; i++) {
-         printf("Patient ID: %d, Name: %s, Age: %d, Gender: %s, Contact: %s\n",
-                patients[i].patientID, patients[i].name, patients[i].age, patients[i].gender, patients[i].contact);
-      }
-
+   if (patientCount < 40)
+   {
+      patients[patientCount].patientID = patientCount + 1; // Auto ID
+      strcpy(patients[patientCount].name, name);
+      patients[patientCount].age = age;
+      strcpy(patients[patientCount].gender, gender);
+      strcpy(patients[patientCount].contact, contact);
+      patientCount++;
+      printf("Patient added successfully with ID: %d\n", patients[patientCount - 1].patientID);
+   }
+   else
+   {
+      printf("Patient limit reached. Cannot add more patients.\n");
+   }
+   for (int i = 0; i < patientCount; i++)
+   {
+      printf("Patient ID: %d, Name: %s, Age: %d, Gender: %s, Contact: %s\n",
+             patients[i].patientID, patients[i].name, patients[i].age, patients[i].gender, patients[i].contact);
+   }
 }
-
-
 
 /*
 Function: deletePatient()
@@ -233,10 +216,7 @@ patientCount
 
 void deletePatient()
 {
-
 }
-
-
 
 /*
 Function: searchPatient()
@@ -255,10 +235,7 @@ patientCount
 
 void searchPatient()
 {
-
 }
-
-
 
 /*
 Function: updatePatient()
@@ -277,10 +254,7 @@ patientCount
 
 void updatePatient()
 {
-
 }
-
-
 
 /*
 Function: sortPatients()
@@ -299,10 +273,7 @@ patientCount
 
 void sortPatients()
 {
-
 }
-
-
 
 /* ==================================================
    QUEUE FUNCTIONS - Dimanya
@@ -325,17 +296,18 @@ rear
 */
 void enqueuePatient(int patientID)
 {
-   if(rear== 49){
-      printf("The patient queue is full! Patient %d cannot be added to the queue.",patientID);
-      return;}
-    else{
-        rear=rear+1;
-        waitingQueue[rear]=patientID;
-        printf("Patient %d added to the queue successfully \n",patientID);
-    }
+   if (rear == 49)
+   {
+      printf("The patient queue is full! Patient %d cannot be added to the queue.", patientID);
+      return;
    }
-
-
+   else
+   {
+      rear = rear + 1;
+      waitingQueue[rear] = patientID;
+      printf("Patient %d added to the queue successfully \n", patientID);
+   }
+}
 
 /*
 Function: dequeuePatient()
@@ -355,10 +327,7 @@ rear
 
 void dequeuePatient()
 {
-
 }
-
-
 
 /*
 Function: peekNextPatient()
@@ -373,10 +342,7 @@ without removing it.
 
 void peekNextPatient()
 {
-
 }
-
-
 
 /*
 Function: displayQueue()
@@ -387,10 +353,7 @@ Display all patients waiting in the queue.
 
 void displayQueue()
 {
-
 }
-
-
 
 /*
 Function: queueSize()
@@ -401,25 +364,21 @@ Return number of patients in queue.
 
 void queueSize()
 {
-
 }
-
-
 
 /* ==================================================
    EMERGENCY QUEUE FUNCTIONS - Dulana
    ================================================== */
 
-void initializeEmergencyQueue(struct emergencyQueue* queue)
+void initializeEmergencyQueue(struct emergencyQueue *queue)
 {
    queue->front = NULL;
    queue->rear = NULL;
 }
 
-
-struct emergencyNode* createEmergencyNode(int patientID, int emergencyScore)
+struct emergencyNode *createEmergencyNode(int patientID, int emergencyScore)
 {
-   struct emergencyNode* newNode = (struct emergencyNode*)malloc(sizeof(struct emergencyNode));
+   struct emergencyNode *newNode = (struct emergencyNode *)malloc(sizeof(struct emergencyNode));
    if (newNode == NULL)
    {
       return NULL;
@@ -446,12 +405,14 @@ returns 0 otherwise.
 
 */
 
-int isEmergencyEmpty(struct emergencyQueue* queue)
+int isEmergencyEmpty(struct emergencyQueue *queue)
 {
-   if(queue->front == NULL){
+   if (queue->front == NULL)
+   {
       return 1;
    }
-   else{
+   else
+   {
       return 0;
    }
 }
@@ -478,48 +439,57 @@ Emergency Score Guide:
 
 */
 
-void enqueueEmergency(struct emergencyQueue* queue, int patientID, int emergencyScore)
+void enqueueEmergency(struct emergencyQueue *queue, int patientID, int emergencyScore)
 {
-   if (emergencyScore > 3 || emergencyScore < 1) {
+   if (emergencyScore > 3 || emergencyScore < 1)
+   {
       printf("Invalid Emeregency Condition");
       return;
    }
 
-   struct emergencyNode* newNode;
+   struct emergencyNode *newNode;
    newNode = createEmergencyNode(patientID, emergencyScore);
-   //empty queue
-   if (isEmergencyEmpty(queue) == 1){
+   // empty queue
+   if (isEmergencyEmpty(queue) == 1)
+   {
       queue->front = newNode;
       queue->rear = newNode;
       return;
    }
 
-   //non emepty queue
-   struct emergencyNode* temp;
+   // non emepty queue
+   struct emergencyNode *temp;
    temp = queue->rear;
    int enqueued = 0;
-   while(!enqueued){
-      if(emergencyScore > temp->emergencyScore){
+   while (!enqueued)
+   {
+      if (emergencyScore > temp->emergencyScore)
+      {
          // if temp has reached to front and want to add node to the front
-         if(temp == queue->front){
+         if (temp == queue->front)
+         {
             temp->prev = newNode;
             newNode->next = temp;
             queue->front = newNode;
             enqueued = 1;
          }
-         else{
-             temp = temp->prev;
+         else
+         {
+            temp = temp->prev;
          }
       }
-      else{
-         //if new node is going to be attached to the rear
-         if(temp == queue->rear){
+      else
+      {
+         // if new node is going to be attached to the rear
+         if (temp == queue->rear)
+         {
             newNode->prev = temp;
             temp->next = newNode;
             queue->rear = newNode;
             enqueued = 1;
          }
-         else{
+         else
+         {
             newNode->next = temp->next;
             newNode->prev = temp;
             temp->next->prev = newNode;
@@ -551,7 +521,6 @@ queue->rear
 
 void dequeueEmergency()
 {
-
 }
 
 /*
@@ -574,7 +543,6 @@ queue->front
 
 void peekEmergency()
 {
-
 }
 
 /*
@@ -596,23 +564,22 @@ queue->front
 queue->rear
 */
 
-void displayEmergencyQueue(struct emergencyQueue* queue)
+void displayEmergencyQueue(struct emergencyQueue *queue)
 {
-   if(isEmergencyEmpty(queue) == 1){
+   if (isEmergencyEmpty(queue) == 1)
+   {
       printf("Emergency Queue is empty.\n");
    }
-   else{
-      struct emergencyNode* temp = queue->front;
-      while(temp != NULL){
+   else
+   {
+      struct emergencyNode *temp = queue->front;
+      while (temp != NULL)
+      {
          printf("Emergency Patient ID: %d\n", temp->patientID);
          temp = temp->next;
       }
    }
 }
-
-
-
-
 
 /* ==================================================
    TREATMENT FUNCTIONS - Dasun
@@ -638,7 +605,6 @@ treatmentHead → start of treatment list
 
 void addTreatment()
 {
-
 }
 
 /*
@@ -661,7 +627,6 @@ treatmentHead
 
 void deleteTreatment()
 {
-
 }
 
 /*
@@ -681,7 +646,6 @@ treatmentHead
 
 void displayTreatments()
 {
-
 }
 
 /*
@@ -701,7 +665,6 @@ treatmentHead
 
 void searchTreatment()
 {
-
 }
 
 /*
@@ -721,10 +684,7 @@ treatmentHead
 
 void sortTreatmentsByCost()
 {
-
 }
-
-
 
 /* ==================================================
    DRUG INVENTORY FUNCTIONS - Neleesha
@@ -751,7 +711,6 @@ inventoryTail
 
 void addDrug()
 {
-
 }
 
 /*
@@ -771,7 +730,6 @@ inventoryHead
 
 void updateDrugStock()
 {
-
 }
 
 /*
@@ -791,7 +749,6 @@ inventoryHead
 
 void searchDrug()
 {
-
 }
 
 /*
@@ -812,7 +769,6 @@ inventoryTail
 
 void displayInventory()
 {
-
 }
 
 /*
@@ -832,10 +788,7 @@ inventoryHead
 
 void sortDrugsByName()
 {
-
 }
-
-
 
 /* ==================================================
    PHARMACY ORDER FUNCTIONS - Harsha
@@ -860,7 +813,6 @@ pharmacyTop
 
 void createOrder()
 {
-
 }
 
 /*
@@ -882,7 +834,6 @@ inventoryHead
 
 void calculatePrice()
 {
-
 }
 
 /*
@@ -902,7 +853,6 @@ inventoryHead
 
 void updateInventoryAfterSale()
 {
-
 }
 
 /*
@@ -922,7 +872,6 @@ pharmacyTop
 
 void displayOrders()
 {
-
 }
 
 /*
@@ -943,9 +892,7 @@ pharmacyTop
 
 void cancelLastOrder()
 {
-
 }
-
 
 /* ==================================================
    BILLING FUNCTIONS  - Methoo
@@ -970,7 +917,6 @@ billCount
 
 void generateBill()
 {
-
 }
 
 /*
@@ -991,7 +937,6 @@ billCount
 
 void updatePaymentStatus()
 {
-
 }
 
 /*
@@ -1011,7 +956,6 @@ billCount
 
 void searchBill()
 {
-
 }
 
 /*
@@ -1030,7 +974,6 @@ billCount
 
 void displayBills()
 {
-
 }
 
 /*
@@ -1050,129 +993,495 @@ billCount
 
 void sortBillsByAmount()
 {
-
 }
-
 
 int main()
 {
+   int patientID;
+   char name[50];
+   int age;
+   char gender[10];
+   char contact[20];
+   int choice, workflow;
+   initializeEmergencyQueue(&EMERGENCY_QUEUE);
 
-    int choice;
-    initializeEmergencyQueue(&EMERGENCY_QUEUE);
+   //  while(1)
+   // {
+   //    printf("\n==== CLINIC MANAGEMENT SYSTEM ====\n");
 
-    while(1)
-    {
-        printf("\n==== CLINIC MANAGEMENT SYSTEM ====\n");
+   //    printf("1 Add Patient\n");
+   //    printf("2 Delete Patient\n");
+   //    printf("3 Search Patient\n");
+   //    printf("4 Update Patient\n");
+   //    printf("5 Sort Patients\n");
 
-        printf("1 Add Patient\n");
-        printf("2 Delete Patient\n");
-        printf("3 Search Patient\n");
-        printf("4 Update Patient\n");
-        printf("5 Sort Patients\n");
+   //    printf("6 Add to Waiting Queue\n");
+   //    printf("7 Treat Next Patient\n");
 
-        printf("6 Add to Waiting Queue\n");
-        printf("7 Treat Next Patient\n");
+   //    printf("8 Emergency Patient\n");
 
-        printf("8 Emergency Patient\n");
+   //    printf("9 Add Treatment\n");
 
-        printf("9 Add Treatment\n");
+   //    printf("10 Pharmacy Order\n");
 
-        printf("10 Pharmacy Order\n");
+   //    printf("11 Generate Bill\n");
 
-        printf("11 Generate Bill\n");
+   //    printf("0 Exit\n");
 
-        printf("0 Exit\n");
+   //    printf("Enter choice: ");
+   //    scanf("%d", &choice);
+   //    getchar();
 
-        printf("Enter choice: ");
-        scanf("%d",&choice);
-        getchar();
+   //    switch (choice)
+   //    {
 
-        
-        int patientID;
-        char name[50];
-        int age;
-        char gender[10];
-        char contact[20];
+   //    case 1:
+   //       printf("Adding new patient...\n");
+   //       printf("Enter patient details:\n");
+   //       printf("Patient Name: ");
+   //       fflush(stdin);
+   //       fgets(name, sizeof(name), stdin);
+   //       size_t len = strlen(name);
+   //       if (len > 0 && name[len - 1] == '\n')
+   //       {
+   //          name[len - 1] = '\0';
+   //       }
+   //       printf("Patient Age: ");
+   //       scanf("%d", &age);
+   //       getchar();
+   //       printf("Patient Gender [M/F]: ");
+   //       fgets(gender, sizeof(gender), stdin);
+   //       len = strlen(gender);
+   //       if (len > 0 && gender[len - 1] == '\n')
+   //       {
+   //          gender[len - 1] = '\0';
+   //       }
+   //       printf("Patient Contact: ");
+   //       fgets(contact, sizeof(contact), stdin);
+   //       len = strlen(contact);
+   //       if (len > 0 && contact[len - 1] == '\n')
+   //       {
+   //          contact[len - 1] = '\0';
+   //       }
+   //       addPatient(name, age, gender, contact);
+   //       break;
+   //    case 2:
+   //       deletePatient();
+   //       break;
+   //    case 3:
+   //       searchPatient();
+   //       break;
+   //    case 4:
+   //       updatePatient();
+   //       break;
+   //    case 5:
+   //       sortPatients();
+   //       break;
 
+   //    case 6:
+   //       printf("Enter Patient ID to add to waiting queue: ");
+   //       scanf("%d", &patientID);
+   //       enqueuePatient(patientID);
+   //       break;
+   //    case 7:
+   //       dequeuePatient();
+   //       break;
 
-        switch(choice)
-        {
-            
+   //    case 8:
+   //       printf("--INSERT PATIENT TO EMERGENCY PRIORITY QUEUE--\n");
+   //       printf("Enter Emergency Patient ID: ");
+   //       int emergencyPatientID;
+   //       scanf(" %d", &emergencyPatientID);
+   //       if (emergencyPatientID < 1 || emergencyPatientID > patientCount)
+   //       {
+   //          printf("Invalid ID\n");
+   //          break;
+   //       }
+   //       printf("Enter Emergency condition:\nCritical: 3\nUrgent: 2\nNon-Urgent: 1\n");
+   //       int emergencyScore;
+   //       if (scanf(" %d", &emergencyScore) != 1)
+   //       {
+   //          printf("Invalid emergency condition input\n");
+   //          break;
+   //       }
+   //       if (emergencyScore < 1 || emergencyScore > 3)
+   //       {
+   //          printf("Invalid emergency condition score. Please enter 1, 2, or 3.\n");
+   //          break;
+   //       }
+   //       printf("Inserting...\n");
+   //       enqueueEmergency(&EMERGENCY_QUEUE, emergencyPatientID, emergencyScore);
+   //       printf("Inserted.\nCurrent Queue:\n");
+   //       displayEmergencyQueue(&EMERGENCY_QUEUE);
+   //       break;
+
+   //    case 9:
+   //       addTreatment();
+   //       break;
+
+   //    case 10:
+   //       createOrder();
+   //       break;
+
+   //    case 11:
+   //       generateBill();
+   //       break;
+
+   //    case 0:
+   //       return 0;
+
+   //    default:
+   //       printf("Invalid option\n");
+   //    }
+   // }
+
+   while (1)
+   {
+      printf("\nSelect workflow:\n");
+      printf("1. Patient Registration\n");
+      printf("2. Waiting queue management\n");
+      printf("3. Emergency case handling\n");
+      printf("4. Treatment record management\n");
+      printf("5. Pharmacy inventory management\n");
+      printf("6. Medicine Purchase Tracking\n");
+      printf("7. Billing and payment processing\n");
+      printf("Enter choice: ");
+      scanf("%d", &workflow);
+      switch (workflow)
+      {
+      case 1:
+         while (1)
+         {
+            printf("\nPatient Registration Workflow\n");
+            printf("1: Add Patient\n");
+            printf("2: Delete Patient\n");
+            printf("3: Search Patient\n");
+            printf("4: Update Patient\n");
+            printf("5: Sort Patients\n");
+            printf("0: Exit Patient Registration Workflow\n");
+            printf("Enter choice: ");
+            scanf("%d", &choice);
+            switch (choice)
+            {
             case 1:
-                printf("Adding new patient...\n");
-                printf("Enter patient details:\n");
-                printf("Patient Name: ");
-                fflush(stdin);
-                fgets(name, sizeof(name), stdin);
-                size_t len = strlen(name);
-                if (len > 0 && name[len - 1] == '\n') {
-                    name[len - 1] = '\0';
-                }
-                printf("Patient Age: ");
-                scanf("%d", &age);
-                getchar(); 
-                printf("Patient Gender [M/F]: ");
-                fgets(gender, sizeof(gender), stdin);
-                len = strlen(gender);
-                if (len > 0 && gender[len - 1] == '\n') {
-                    gender[len - 1] = '\0';
-                }
-                printf("Patient Contact: ");
-                fgets(contact, sizeof(contact), stdin);
-                len = strlen(contact);
-                if (len > 0 && contact[len - 1] == '\n') {
-                    contact[len - 1] = '\0';
-                }
-                addPatient(name, age, gender, contact);
-                break;
-            case 2: deletePatient(); break;
-            case 3: searchPatient(); break;
-            case 4: updatePatient(); break;
-            case 5: sortPatients(); break;
-
-            case 6: 
+               printf("Adding new patient...\n");
+               printf("Enter patient details:\n");
+               printf("Patient Name: ");
+               getchar();
+               fflush(stdin);
+               fgets(name, sizeof(name), stdin);
+               size_t len = strlen(name);
+               if (len > 0 && name[len - 1] == '\n')
+               {
+                  name[len - 1] = '\0';
+               }
+               printf("Patient Age: ");
+               scanf("%d", &age);
+               getchar();
+               printf("Patient Gender [M/F]: ");
+               fgets(gender, sizeof(gender), stdin);
+               len = strlen(gender);
+               if (len > 0 && gender[len - 1] == '\n')
+               {
+                  gender[len - 1] = '\0';
+               }
+               printf("Patient Contact: ");
+               fgets(contact, sizeof(contact), stdin);
+               len = strlen(contact);
+               if (len > 0 && contact[len - 1] == '\n')
+               {
+                  contact[len - 1] = '\0';
+               }
+               addPatient(name, age, gender, contact);
+               break;
+            case 2:
+               deletePatient();
+               break;
+            case 3:
+               searchPatient();
+               break;
+            case 4:
+               updatePatient();
+               break;
+            case 5:
+               sortPatients();
+               break;
+            case 0:
+               printf("Returning to Main Menu...\n");
+               break;
+            default:
+               printf("Invalid option\n");
+            }
+            if (choice == 0)
+               break;
+         }
+         break;
+      case 2:
+         while (1)
+         {
+            printf("\nWaiting Queue Management Workflow\n");
+            printf("1: Add to Waiting Queue\n");
+            printf("2: Treat Next Patient\n");
+            printf("3: View Next Patient\n");
+            printf("4: Display Waiting Queue\n");
+            printf("5: Get Queue Size\n");
+            printf("0: Exit Waiting Queue Management Workflow\n");
+            printf("Enter choice: ");
+            scanf("%d", &choice);
+            switch (choice)
+            {
+            case 1:
                printf("Enter Patient ID to add to waiting queue: ");
+               int patientID;
                scanf("%d", &patientID);
                enqueuePatient(patientID);
                break;
-            case 7: dequeuePatient(); break;
+            case 2:
+               dequeuePatient();
+               break;
+            case 3:
+               peekNextPatient();
+               break;
+            case 4:
+               displayQueue();
+               break;
+            case 5:
+               queueSize();
+               break;
+            case 0:
+               printf("Returning to Main Menu...\n");
+                break;;
+            default:
+               printf("Invalid option\n");
+            }
+            if (choice == 0)
+               break;
+         }
+         break;
+      case 3:
+         while (1)
+         {
+            printf("\nEmergency Case Handling Workflow\n");
+            printf("1: Check queue is empty\n");
+            printf("2: Add Emergency Patient\n");
+            printf("3: Treat Next Emergency Patient\n");
+            printf("4: View Highest Priority Emergency Patient\n");
+            printf("5: Display Emergency Queue\n");
+            printf("0: Exit Emergency Case Handling Workflow\n");
+            printf("Enter choice: ");
+            scanf("%d", &choice);
+            switch (choice)
+            {
+            case 1:
+               isEmergencyEmpty(&EMERGENCY_QUEUE);
+               break;
+            case 2:
+               printf("--INSERT PATIENT TO EMERGENCY PRIORITY QUEUE--\n");
+               printf("Enter Emergency Patient ID: ");
+               int emergencyPatientID;
+               scanf(" %d", &emergencyPatientID);
+               if (emergencyPatientID < 1 || emergencyPatientID > patientCount)
+               {
+                  printf("Invalid ID\n");
+                  break;
+               }
+               printf("Enter Emergency condition:\nCritical: 3\nUrgent: 2\nNon-Urgent: 1\n");
+               int emergencyScore;
+               if (scanf(" %d", &emergencyScore) != 1)
+               {
+                  printf("Invalid emergency condition input\n");
+                  break;
+               }
+               if (emergencyScore < 1 || emergencyScore > 3)
+               {
+                  printf("Invalid emergency condition score. Please enter 1, 2, or 3.\n");
+                  break;
+               }
+               printf("Inserting...\n");
+               enqueueEmergency(&EMERGENCY_QUEUE, emergencyPatientID, emergencyScore);
+               printf("Inserted.\nCurrent Queue:\n");
+               displayEmergencyQueue(&EMERGENCY_QUEUE);
+               break;
+            case 3:
+               dequeueEmergency();
+               break;
+            case 4:
+               peekEmergency();
+               break;
+            case 5:
+               displayEmergencyQueue(&EMERGENCY_QUEUE);
+               break;
+            case 0:
+               printf("Returning to Main Menu...\n");
+                break;;
+            default:
+               printf("Invalid option\n");
+            }
+            if (choice == 0)
+               break;
+         }
 
-            case 8: 
-                printf("--INSERT PATIENT TO EMERGENCY PRIORITY QUEUE--\n");
-                printf("Enter Emergency Patient ID: ");
-                int emergencyPatientID;
-                scanf(" %d", &emergencyPatientID);
-                if(emergencyPatientID < 1 || emergencyPatientID > patientCount){
-                    printf("Invalid ID\n");
-                    break;
-                }
-                printf("Enter Emergency condition:\nCritical: 3\nUrgent: 2\nNon-Urgent: 1\n");
-                int emergencyScore;
-                if (scanf(" %d", &emergencyScore) != 1) {
-                    printf("Invalid emergency condition input\n");
-                    break;
-                }
-                if (emergencyScore < 1 || emergencyScore > 3) {
-                    printf("Invalid emergency condition score. Please enter 1, 2, or 3.\n");
-                    break;
-                }
-                printf("Inserting...\n");
-                enqueueEmergency(&EMERGENCY_QUEUE, emergencyPatientID, emergencyScore); 
-                printf("Inserted.\nCurrent Queue:\n");
-                displayEmergencyQueue(&EMERGENCY_QUEUE);
-                break;
+         break;
+      case 4:
+         while (1)
+         {
+            printf("\nTreatment Record Management Workflow\n");
+            printf("1: Add Treatment\n");
+            printf("2: Delete Treatment\n");
+            printf("3: Display Treatments\n");
+            printf("4: Search Treatment\n");
+            printf("5: Sort Treatments by Cost\n");
+            printf("0: Exit Treatment Record Management Workflow\n");
+            printf("Enter choice: ");
+            scanf("%d", &choice);
+            switch (choice)
+            {
+            case 1:
+               addTreatment();
+               break;
+            case 2:
+               deleteTreatment();
+               break;
+            case 3:
+               displayTreatments();
+               break;
+            case 4:
+               searchTreatment();
+               break;
+            case 5:
+               sortTreatmentsByCost();
+               break;
+            case 0:
+               printf("Returning to Main Menu...\n");
+                break;;
+            default:
+               printf("Invalid option\n");
+            }
+            if (choice == 0)
+               break;
+         }
+         break;
+      case 5:
+         while (1)
+         {
+            printf("\nPharmacy Inventory Management Workflow\n");
+            printf("1: Add Drug\n");
+            printf("2: Update Drug Stock\n");
+            printf("3: Search Drug\n");
+            printf("4: Display Inventory\n");
+            printf("5: Sort Drugs by Name\n");
+            printf("0: Exit Pharmacy Inventory Management Workflow\n");
+            printf("Enter choice: ");
+            scanf("%d", &choice);
+            switch (choice)
+            {
+            case 1:
+               addDrug();
+               break;
+            case 2:
+               updateDrugStock();
+               break;
+            case 3:
+               searchDrug();
+               break;
+            case 4:
+               displayInventory();
+               break;
+            case 5:
+               sortDrugsByName();
+               break;
+            case 0:
+               printf("Returning to Main Menu...\n");
+                break;;
+            default:
+               printf("Invalid option\n");
+            }
+            if (choice == 0)
+               break;
+         }
+         break;
+      case 6:
+         while (1)
+         {
+            printf("\nMedicine Purchase Workflow\n");
+            printf("1: Create Pharmacy Order\n");
+            printf("2: Calculate Order Price\n");
+            printf("3: Update Inventory After Sale\n");
+            printf("4: Display Orders\n");
+            printf("5: Cancel Last Order\n");
+            printf("0: Exit Medicine Purchase Workflow\n");
+            printf("Enter choice: ");
+            scanf("%d", &choice);
+            switch (choice)
+            {
+            case 1:
+               createOrder();
+               break;
+            case 2:
+               calculatePrice();
+               break;
+            case 3:
+               updateInventoryAfterSale();
+               break;
+            case 4:
+               displayOrders();
+               break;
+            case 5:
+               cancelLastOrder();
+               break;
+            case 0:
+               printf("Returning to Main Menu...\n");
+                break;;
+            default:
+               printf("Invalid option\n");
+            }
+            if (choice == 0)
+               break;
+         }
 
-            case 9: addTreatment(); break;
-
-            case 10: createOrder(); break;
-
-            case 11: generateBill(); break;
-
-            case 0: return 0;
-
-            default: printf("Invalid option\n");
-        }
-
-    }
-
+         break;
+      case 7:
+         while (1)
+         {
+            printf("\nBilling and Payment Processing Workflow\n");
+            printf("1: Generate Bill\n");
+            printf("2: Update Payment Status\n");
+            printf("3: Search Bill\n");
+            printf("4: Display Bills\n");
+            printf("5: Sort Bills by Amount\n");
+            printf("0: Exit Billing and Payment Processing Workflow\n");
+            printf("Enter choice: ");
+            scanf("%d", &choice);
+            switch (choice)
+            {
+            case 1:
+               generateBill();
+               break;
+            case 2:
+               updatePaymentStatus();
+               break;
+            case 3:
+               searchBill();
+               break;
+            case 4:
+               displayBills();
+               break;
+            case 5:
+               sortBillsByAmount();
+               break;
+            case 0:
+               printf("Returning to Main Menu...\n");
+                break;;
+            default:
+               printf("Invalid option.\n");
+            }
+            if (choice == 0)
+               break;
+         }
+         break;
+      default:
+         printf("Invalid workflow selection.\n");
+      }
+   }
+   return 0;
 }
