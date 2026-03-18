@@ -338,6 +338,7 @@ void sortPatients(struct Patient patients[], int patientCount)
          patients[minIndex] = temp;
       }
    }
+   printf("Patients sorted alphabetically by name.\n");
 }
 
 void printPratients()
