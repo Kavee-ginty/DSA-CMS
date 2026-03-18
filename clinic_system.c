@@ -135,6 +135,38 @@ struct Drug
 struct Drug *inventoryHead = NULL;
 struct Drug *inventoryTail = NULL;
 
+void initializeDummyDrugs() {
+    // Array of dummy data
+    struct Drug dummyDrugs[10] = {
+        {1, "Paracetamol", 100, 2.50, NULL, NULL},
+        {2, "Amoxicillin", 50, 5.00, NULL, NULL},
+        {3, "Ibuprofen", 200, 3.20, NULL, NULL},
+        {4, "Cetirizine", 150, 1.50, NULL, NULL},
+        {5, "Omeprazole", 80, 4.75, NULL, NULL},
+        {6, "Aspirin", 300, 1.80, NULL, NULL},
+        {7, "Loratadine", 120, 2.00, NULL, NULL},
+        {8, "Metformin", 90, 5.50, NULL, NULL},
+        {9, "Azithromycin", 60, 8.00, NULL, NULL},
+        {10, "Diclofenac", 110, 3.50, NULL, NULL}
+    };
+
+    // Insert them into your linked list here
+    for(int i = 0; i < 10; i++) {
+        struct Drug* newDrug = (struct Drug*)malloc(sizeof(struct Drug));
+        *newDrug = dummyDrugs[i];
+        
+        if (inventoryHead == NULL) {
+            inventoryHead = newDrug;
+            inventoryTail = newDrug;
+        } else {
+            inventoryTail->next = newDrug;
+            newDrug->prev = inventoryTail;
+            inventoryTail = newDrug;
+        }
+    }
+}
+
+
 /* ==================================================
    6. PHARMACY ORDERS - Harsha
    ================================================== */
@@ -947,6 +979,75 @@ pharmacyTop
 
 void createOrder()
 {
+   printf("\n--- Available Drugs ---\n");
+   struct Drug *temp = inventoryHead;
+   if (temp == NULL)
+   {
+      printf("No drugs available in inventory.\n");
+      return; // Exit early since user can't order anything
+   }
+   else{
+   
+      while (temp != NULL)
+      {
+         printf("ID: %d | Name: %s | Qty: %d | Price: %.2f\n", 
+                temp->drugID, temp->name, temp->quantity, temp->unitPrice);
+         temp = temp->next;
+      }
+   }
+   printf("-----------------------\n");
+
+   int pID;
+   printf("\nEnter Patient ID: ");
+   scanf("%d", &pID);
+   getchar(); // Consume trailing newline
+
+   char addMore;
+   do {
+      if (pharmacyTop >= 49)
+      {
+         printf("Pharmacy stack is full! Cannot add more orders.\n");
+         break;
+      }
+
+      int dID, qty;
+      printf("\nEnter Drug ID: ");
+      scanf("%d", &dID);
+
+      // Validation: Find the drug name string by ID
+      char dName[50] = "";
+      temp = inventoryHead;
+      int found = 0;
+      while(temp != NULL) {
+         if (temp->drugID == dID) {
+            strcpy(dName, temp->name);
+            found = 1;
+            break;
+         }
+         temp = temp->next;
+      }
+
+      if (!found) {
+         printf("Invalid Drug ID! Order for this ID cancelled.\n");
+         getchar(); 
+      } else {
+         printf("Enter Quantity: ");
+         scanf("%d", &qty);
+         getchar(); // Consume trailing newline
+
+         pharmacyTop++;
+         pharmacyStack[pharmacyTop].patientID = pID; // Assigned patient ID
+         strcpy(pharmacyStack[pharmacyTop].drugName, dName); // Still storing Name in order struct
+         pharmacyStack[pharmacyTop].quantity = qty;
+         pharmacyStack[pharmacyTop].totalPrice = 0.0;
+
+         printf("Pharmacy order for '%s' created successfully for Patient %d.\n", dName, pID);
+      }
+
+      printf("\nDo you want to add another drug? (Y/N): ");
+      scanf(" %c", &addMore);
+      getchar(); // Consume trailing newline
+   } while (addMore == 'Y' || addMore == 'y');
 }
 
 /*
@@ -968,6 +1069,42 @@ inventoryHead
 
 void calculatePrice()
 {
+   if (pharmacyTop == -1)
+   {
+      printf("No orders to calculate price for.\n");
+      return;
+   }
+
+   float grandTotal = 0.0;
+   printf("\n--- Calculated Prices ---\n");
+
+   for (int i = 0; i <= pharmacyTop; i++) 
+   {
+      struct PharmacyOrder *order = &pharmacyStack[i];
+      struct Drug *temp = inventoryHead;
+      int found = 0;
+
+      while (temp != NULL)
+      {
+         if (strcmp(temp->name, order->drugName) == 0)
+         {
+            order->totalPrice = temp->unitPrice * order->quantity;
+            printf(" - %d x %s: %.2f\n", order->quantity, order->drugName, order->totalPrice);
+            grandTotal += order->totalPrice;
+            found = 1;
+            break;
+         }
+         temp = temp->next;
+      }
+
+      if (!found)
+      {
+         printf(" - Error: Drug '%s' not found in inventory.\n", order->drugName);
+      }
+   }
+
+   printf("-------------------------\n");
+   printf("GRAND TOTAL FOR ALL ORDERS: %.2f\n", grandTotal);
 }
 
 /*
@@ -987,6 +1124,45 @@ inventoryHead
 
 void updateInventoryAfterSale()
 {
+   if (pharmacyTop == -1)
+   {
+      printf("No orders to process.\n");
+      return;
+   }
+
+   printf("\n--- Updating Inventory ---\n");
+   for (int i = 0; i <= pharmacyTop; i++)
+   {
+      struct PharmacyOrder *order = &pharmacyStack[i];
+      struct Drug *temp = inventoryHead;
+      int found = 0;
+
+      while (temp != NULL)
+      {
+         if (strcmp(temp->name, order->drugName) == 0)
+         {
+            if (temp->quantity >= order->quantity)
+            {
+               temp->quantity -= order->quantity;
+               printf("Updated %s: %d remaining.\n", temp->name, temp->quantity);
+            }
+            else
+            {
+               printf("Warning: Insufficient stock for %s! Have %d, order requires %d.\n", 
+                      temp->name, temp->quantity, order->quantity);
+            }
+            found = 1;
+            break;
+         }
+         temp = temp->next;
+      }
+
+      if (!found)
+      {
+         printf("Error: Drug '%s' not found in inventory to update.\n", order->drugName);
+      }
+   }
+   printf("--------------------------\n");
 }
 
 /*
@@ -1006,6 +1182,22 @@ pharmacyTop
 
 void displayOrders()
 {
+   if (pharmacyTop == -1)
+   {
+      printf("No pharmacy orders in the history yet.\n");
+      return;
+   }
+
+   printf("\n====== PHARMACY ORDER HISTORY ======\n");
+   for (int i = pharmacyTop; i >= 0; i--) // Displaying from most recent to oldest
+   {
+      printf("Patient ID: %d | Drug: %s | Qty: %d | Total: %.2f\n",
+             pharmacyStack[i].patientID,
+             pharmacyStack[i].drugName,
+             pharmacyStack[i].quantity,
+             pharmacyStack[i].totalPrice);
+   }
+   printf("====================================\n\n");
 }
 
 /*
@@ -1026,6 +1218,22 @@ pharmacyTop
 
 void cancelLastOrder()
 {
+   if (pharmacyTop == -1)
+   {
+      printf("No orders to cancel.\n");
+      return;
+   }
+
+   struct PharmacyOrder *lastOrder = &pharmacyStack[pharmacyTop];
+
+   // Optional: Provide a feature to add stock back to inventory if this order already deducted it.
+   // But since it's just canceling from the stack:
+   
+   printf("Cancelled the last order for Patient %d (Drug: %s, Qty: %d).\n", 
+          lastOrder->patientID, lastOrder->drugName, lastOrder->quantity);
+          
+   // Reduce the top counter to remove the order
+   pharmacyTop--;
 }
 
 /* ==================================================
@@ -1139,7 +1347,137 @@ int main()
    int choice, workflow;
    initializeEmergencyQueue(&EMERGENCY_QUEUE);
 
-   
+    initializeDummyDrugs();
+
+   //  while(1)
+   // {
+   //    printf("\n==== CLINIC MANAGEMENT SYSTEM ====\n");
+
+   //    printf("1 Add Patient\n");
+   //    printf("2 Delete Patient\n");
+   //    printf("3 Search Patient\n");
+   //    printf("4 Update Patient\n");
+   //    printf("5 Sort Patients\n");
+
+   //    printf("6 Add to Waiting Queue\n");
+   //    printf("7 Treat Next Patient\n");
+
+   //    printf("8 Emergency Patient\n");
+
+   //    printf("9 Add Treatment\n");
+
+   //    printf("10 Pharmacy Order\n");
+
+   //    printf("11 Generate Bill\n");
+
+   //    printf("0 Exit\n");
+
+   //    printf("Enter choice: ");
+   //    scanf("%d", &choice);
+   //    getchar();
+
+   //    switch (choice)
+   //    {
+
+   //    case 1:
+   //       printf("Adding new patient...\n");
+   //       printf("Enter patient details:\n");
+   //       printf("Patient Name: ");
+   //       fflush(stdin);
+   //       fgets(name, sizeof(name), stdin);
+   //       size_t len = strlen(name);
+   //       if (len > 0 && name[len - 1] == '\n')
+   //       {
+   //          name[len - 1] = '\0';
+   //       }
+   //       printf("Patient Age: ");
+   //       scanf("%d", &age);
+   //       getchar();
+   //       printf("Patient Gender [M/F]: ");
+   //       fgets(gender, sizeof(gender), stdin);
+   //       len = strlen(gender);
+   //       if (len > 0 && gender[len - 1] == '\n')
+   //       {
+   //          gender[len - 1] = '\0';
+   //       }
+   //       printf("Patient Contact: ");
+   //       fgets(contact, sizeof(contact), stdin);
+   //       len = strlen(contact);
+   //       if (len > 0 && contact[len - 1] == '\n')
+   //       {
+   //          contact[len - 1] = '\0';
+   //       }
+   //       addPatient(name, age, gender, contact);
+   //       break;
+   //    case 2:
+   //       deletePatient();
+   //       break;
+   //    case 3:
+   //       searchPatient();
+   //       break;
+   //    case 4:
+   //       updatePatient();
+   //       break;
+   //    case 5:
+   //       sortPatients();
+   //       break;
+
+   //    case 6:
+   //       printf("Enter Patient ID to add to waiting queue: ");
+   //       scanf("%d", &patientID);
+   //       enqueuePatient(patientID);
+   //       break;
+   //    case 7:
+   //       dequeuePatient();
+   //       break;
+
+   //    case 8:
+   //       printf("--INSERT PATIENT TO EMERGENCY PRIORITY QUEUE--\n");
+   //       printf("Enter Emergency Patient ID: ");
+   //       int emergencyPatientID;
+   //       scanf(" %d", &emergencyPatientID);
+   //       if (emergencyPatientID < 1 || emergencyPatientID > patientCount)
+   //       {
+   //          printf("Invalid ID\n");
+   //          break;
+   //       }
+   //       printf("Enter Emergency condition:\nCritical: 3\nUrgent: 2\nNon-Urgent: 1\n");
+   //       int emergencyScore;
+   //       if (scanf(" %d", &emergencyScore) != 1)
+   //       {
+   //          printf("Invalid emergency condition input\n");
+   //          break;
+   //       }
+   //       if (emergencyScore < 1 || emergencyScore > 3)
+   //       {
+   //          printf("Invalid emergency condition score. Please enter 1, 2, or 3.\n");
+   //          break;
+   //       }
+   //       printf("Inserting...\n");
+   //       enqueueEmergency(&EMERGENCY_QUEUE, emergencyPatientID, emergencyScore);
+   //       printf("Inserted.\nCurrent Queue:\n");
+   //       displayEmergencyQueue(&EMERGENCY_QUEUE);
+   //       break;
+
+   //    case 9:
+   //       addTreatment();
+   //       break;
+
+   //    case 10:
+   //       createOrder();
+   //       break;
+
+   //    case 11:
+   //       generateBill();
+   //       break;
+
+   //    case 0:
+   //       return 0;
+
+   //    default:
+   //       printf("Invalid option\n");
+   //    }
+   // }
 
    while (1)
    {
