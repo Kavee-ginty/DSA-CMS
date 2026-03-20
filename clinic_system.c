@@ -685,8 +685,26 @@ queue->front
 queue->rear
 */
 
-void dequeueEmergency()
+void dequeueEmergency(struct emergencyQueue *queue)
 {
+   struct emergencyNode* temp;
+   if (isEmergencyEmpty(queue)){
+      printf("Emergency queue is empty.\n");
+      return;
+   }
+   temp = queue->front;
+   if(queue->front == queue->rear){
+      queue->front = NULL;
+      queue->rear = NULL;
+   }
+   else{
+      queue->front = temp->next;
+   }
+   printf("Emeregency Patient ID: %d\n", temp->patientID);
+   printf("Emergency condition: %d\n", temp->emergencyScore);
+   printf("Sent Patient for treatments successfully.\n");
+   free(temp);
+   temp = NULL;
 }
 
 /*
@@ -707,8 +725,14 @@ Important Variables:
 queue->front
 */
 
-void peekEmergency()
+void peekEmergency(struct emergencyQueue* queue)
 {
+   if(isEmergencyEmpty(queue)){
+      printf("Emergency queue is empty\n");
+   }
+   else{
+      printf("Emergency Patient ID %d has emergency score of %d\n", queue->front->patientID, queue->front->emergencyScore);
+   }
 }
 
 /*
@@ -1472,6 +1496,7 @@ int main()
    int choice, workflow;
    initializeEmergencyQueue(&EMERGENCY_QUEUE);
    initializeDummyDrugs();
+   int exitKey = 1;
 
    //  while(1)
    // {
@@ -1603,7 +1628,7 @@ int main()
    //    }
    // }
 
-   while (1)
+   while (exitKey)
    {
       printf("\nSelect workflow:\n");
       printf("1. Patient Registration\n");
@@ -1613,6 +1638,7 @@ int main()
       printf("5. Pharmacy inventory management\n");
       printf("6. Medicine Purchase Tracking\n");
       printf("7. Billing and payment processing\n");
+      printf("0. Exit System\n");
       printf("Enter choice: ");
       scanf("%d", &workflow);
       switch (workflow)
@@ -1774,7 +1800,13 @@ int main()
             switch (choice)
             {
             case 1:
-               isEmergencyEmpty(&EMERGENCY_QUEUE);
+               int empty = isEmergencyEmpty(&EMERGENCY_QUEUE);
+               if(empty){
+                  printf("Emergency queue is empty\n");
+               }
+               else{
+                  printf("There are patients who need imediate attention!\n");
+               }
                break;
             case 2:
                printf("--INSERT PATIENT TO EMERGENCY PRIORITY QUEUE--\n");
@@ -1806,10 +1838,10 @@ int main()
                displayEmergencyQueue(&EMERGENCY_QUEUE);
                break;
             case 3:
-               dequeueEmergency();
+               dequeueEmergency(&EMERGENCY_QUEUE);
                break;
             case 4:
-               peekEmergency();
+               peekEmergency(&EMERGENCY_QUEUE);
                break;
             case 5:
                displayEmergencyQueue(&EMERGENCY_QUEUE);
@@ -1981,6 +2013,9 @@ int main()
             if (choice == 0)
                break;
          }
+         break;
+      case 0:
+         exitKey = 0;
          break;
       default:
          printf("Invalid workflow selection.\n");
