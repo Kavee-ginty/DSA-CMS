@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 /*
 ====================================================
@@ -108,12 +109,13 @@ struct Treatment
 {
    int treatmentID;
    int patientID;
-   char treatmentName[50];
+   char treatmentName[1000];
    float cost;
    struct Treatment *next;
 };
 
 struct Treatment *treatmentHead = NULL;
+struct Treatment *treatmentTail = NULL;
 
 /* ==================================================
    5. DRUG INVENTORY (DOUBLY LINKED LIST) - Neleesha
@@ -774,6 +776,39 @@ treatmentHead → start of treatment list
 
 void addTreatment()
 {
+   struct Treatment* newNode = (struct Treatment*) malloc(sizeof(struct Treatment));
+
+   printf("Enter Patient Id for treatment: ");
+   scanf("%d", &newNode->patientID);
+   while(getchar() != '\n');
+
+   printf("\nEnter Treatment Id: ");
+   scanf("%d", &newNode->treatmentID);
+   while(getchar() != '\n');
+
+   printf("\nEnter Treatment name: ");
+   fgets(newNode->treatmentName, sizeof(newNode->treatmentName), stdin);
+   // Remove the newline character from the end of the string
+   newNode->treatmentName[strcspn(newNode->treatmentName, "\n")] = '\0';
+
+   printf("\nEnter cost for all treatments: ");
+   scanf("%f", &newNode->cost);
+
+   newNode->next = NULL;
+   while(getchar() != '\n');
+
+   if(treatmentHead == NULL) {
+      treatmentHead = treatmentTail = newNode;
+   }
+   else {
+      struct Treatment* temp = treatmentHead;
+      while(temp->next != NULL) {
+         temp = temp->next;
+      }
+      temp->next = newNode;
+   }
+
+   printf("Treatment added successfully!\n");
 }
 
 /*
@@ -815,6 +850,21 @@ treatmentHead
 
 void displayTreatments()
 {
+   struct Treatment* temp = treatmentHead;
+
+   if (temp == NULL) {
+      printf("No Treatment found!\n");
+      return;
+   }
+
+   while(temp != NULL) {
+      printf("Patient ID: %d \nTreatment ID: %d \nDescription: %s \nCost: %.2f\n", 
+         temp->patientID, temp->treatmentID, temp->treatmentName, temp->cost);
+      temp = temp->next;
+   }
+
+   printf("End of treatment records.\n");
+
 }
 
 /*
