@@ -68,6 +68,7 @@ int patientCount = 20;
 
 struct waitingNode {
     int patientID;
+    char name[50];
     struct waitingNode* prev;
     struct waitingNode* next;
 };
@@ -327,8 +328,11 @@ void updatePatient(int patientID, char newName[], char newContact[])
    {
       if (patients[i].patientID == patientID)
       {
-         strcpy(patients[i].name, newName);
-         strcpy(patients[i].contact, newContact);
+         if (strlen(newName) > 0) {
+             strcpy(patients[i].name, newName);
+         } if (strlen(newContact) > 0) {
+             strcpy(patients[i].contact, newContact);
+         }
          printf("Patient with ID %d updated successfully.\n", patientID);
          return;
       }
@@ -391,12 +395,13 @@ void initializeWaitingQueue(struct Queue* queue) {
     queue->size = 0;
 }
 
-struct waitingNode* createWaitingPatientNode(int patientID) {
+struct waitingNode* createWaitingPatientNode(int patientID, char name[]) {
     struct waitingNode* newNode = (struct waitingNode*)malloc(sizeof(struct waitingNode));
     if (newNode == NULL) {
         return NULL;
     }
     newNode->patientID = patientID;
+    strcpy(newNode->name, name);
     newNode->prev = NULL;
     newNode->next = NULL;
     return newNode;
@@ -433,7 +438,7 @@ void enqueuePatient(struct Queue* queue, int patientID) {
         return;
     }
 
-    struct waitingNode* newNode = createWaitingPatientNode(patientID);
+    struct waitingNode* newNode = createWaitingPatientNode(patientID, patients[patientID - 1].name);
     if (newNode == NULL) {
         printf("Memory allocation failed for patient %d\n", patientID);
         return;
@@ -449,7 +454,7 @@ void enqueuePatient(struct Queue* queue, int patientID) {
     }
 
     queue->size++;
-    printf("Patient %d added to the queue successfully.\n", patientID);
+    printf("Patient %d - %s added to the queue successfully.\n", patientID, newNode->name);
 }
 
 /*
@@ -468,8 +473,30 @@ front
 rear
 */
 
-void dequeuePatient()
+void dequeuePatient(struct Queue* queue)
 {
+    if (queue->front == NULL) {
+        printf("Queue is empty. No patient to remove.\n");
+        return;
+    }
+
+    struct waitingNode* temp = queue->front;
+
+    printf("Patient %d - %s removed from the queue.\n", temp->patientID, temp->name);
+
+    // Move front to next node
+    queue->front = queue->front->next;
+
+    // If queue is not empty, update prev pointer
+    if (queue->front != NULL) {
+        queue->front->prev = NULL;
+    } else {
+        // If queue becomes empty, rear should also be NULL
+        queue->rear = NULL;
+    }
+
+    free(temp); // free memory
+    queue->size--;
 }
 
 /*
@@ -489,7 +516,8 @@ int peekNextPatient(struct Queue* queue)
         printf("Queue is empty\n");
         return '\0';
     } else {
-        return queue->front->patientID;
+        printf("Next patient in queue: ID %d - %s\n", queue->front->patientID, queue->front->name);
+         return queue->front->patientID;
     }
 }
 
@@ -509,7 +537,7 @@ void displayQueue(struct Queue* queue) {
     printf("Patients in the waiting queue:\n");
     struct waitingNode* temp = queue->front;
     while(temp != NULL){
-        printf("Patient ID: %d\n", temp->patientID);
+        printf("Patient ID: %d , Name: %s\n", temp->patientID, temp->name);
         temp = temp->next;
     }
 }
@@ -1728,27 +1756,30 @@ int main()
             switch (choice)
             {
             case 1:
+            {
                printf("Enter Patient ID to add to waiting queue: ");
                int patientID;
                scanf("%d", &patientID);
                enqueuePatient(&clinicQueue, patientID);
                break;
+            }
             case 2:
-               dequeuePatient();
+               dequeuePatient(&clinicQueue);
                break;
             case 3:
-               int nextPatient = peekNextPatient(&clinicQueue);
-               if(nextPatient != -1){
-                    printf("Next patient ID: %d\n", nextPatient);
-                }
+            {
+               peekNextPatient(&clinicQueue);
                break;
+            }
             case 4:
                displayQueue(&clinicQueue);
                break;
             case 5:
+            {
                int queuecount = queueSize(&clinicQueue);
                printf("Number of patients in queue: %d\n", queuecount);
                break;
+            }
             case 0:
                printf("Returning to Main Menu...\n");
                 break;;
