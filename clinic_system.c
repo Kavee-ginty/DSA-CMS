@@ -778,20 +778,20 @@ void addTreatment()
 {
    struct Treatment* newNode = (struct Treatment*) malloc(sizeof(struct Treatment));
 
-   printf("Enter Patient Id for treatment: ");
+   printf("\nEnter Patient Id for treatment: ");
    scanf("%d", &newNode->patientID);
    while(getchar() != '\n');
 
-   printf("\nEnter Treatment Id: ");
+   printf("Enter Treatment Id: ");
    scanf("%d", &newNode->treatmentID);
    while(getchar() != '\n');
 
-   printf("\nEnter Treatment name: ");
+   printf("Enter Treatment name: ");
    fgets(newNode->treatmentName, sizeof(newNode->treatmentName), stdin);
    // Remove the newline character from the end of the string
    newNode->treatmentName[strcspn(newNode->treatmentName, "\n")] = '\0';
 
-   printf("\nEnter cost for all treatments: ");
+   printf("Enter cost for all treatments: ");
    scanf("%f", &newNode->cost);
 
    newNode->next = NULL;
@@ -808,7 +808,7 @@ void addTreatment()
       temp->next = newNode;
    }
 
-   printf("Treatment added successfully!\n");
+   printf("\nTreatment added successfully!\n");
 }
 
 /*
