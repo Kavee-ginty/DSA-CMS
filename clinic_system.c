@@ -806,6 +806,7 @@ void addTreatment()
          temp = temp->next;
       }
       temp->next = newNode;
+      treatmentTail = newNode;
    }
 
    printf("\nTreatment added successfully!\n");
@@ -832,54 +833,53 @@ treatmentHead
 void deleteTreatment()
 {
    int id;
-   printf("Enter Treatment Id to delete: ");
+   printf("\nEnter Treatment Id to delete: ");
    scanf("%d", &id);
    
    if (id <= 0) {
-      printf("Invalid Treatment ID! it must be positive number\n");
+      printf("\nInvalid Treatment ID! it must be positive number\n");
       return;
    }
    
-   struct Treatment* temp = treatmentHead;
+   struct Treatment* temp = treatmentHead; 
 
-   
-
-   if (temp == NULL) {
-      printf("No treatment records found!\n");
-      return;
-   }
-   else{
-      if(id == 1){
-         if (treatmentHead == treatmentTail) {
-            treatmentHead = NULL;
-            treatmentTail = NULL;
+   while(temp != NULL) {
+      if (temp->treatmentID == id) {
+         if (temp == treatmentHead) {
+            if (temp == treatmentTail) {
+               treatmentHead = treatmentTail = NULL;
+               free(temp);
+            }
+            else {
+               struct Treatment* nodeToDelete = temp;
+               treatmentHead = temp->next;
+               free(nodeToDelete);
+            }
          }
-         else{
-            treatmentHead = treatmentHead->next;
+         else {
+            struct Treatment* todelete = treatmentHead;
+            if (temp == treatmentTail) {
+               while(todelete->next != temp) {
+                  todelete = todelete->next;
+               }
+               todelete->next = NULL;
+               treatmentTail = todelete;
+               free(temp);
+            }
+            else{
+               for (; todelete->next != temp; todelete = todelete->next);
+               todelete->next = temp->next;
+               free(temp);
+            }
          }
-         free(temp);
+         printf("Treatment with ID %d deleted successfully.\n", id);
+         return;
       }
       else{
-         for(int i = 1; i < (id - 1); i++){
-            if (temp->next == NULL) {
-               printf("Treatment with ID %d not found!\n", id);
-               return;
-            }
-            temp = temp->next;
-         }
-         if(temp->next == treatmentTail){
-            treatmentTail = temp;
-            free(temp->next);
-         }
-         else{
-            struct Treatment* todelete = temp->next;
-            temp->next = todelete->next;
-            free(todelete);
-         }
+         temp = temp->next;
       }
-      printf("Treatment with Id %d deleted successfully!\n", id);
    }
-   
+   printf("Treatment with ID %d not found.\n", id);
 }
 
 /*
