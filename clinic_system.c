@@ -580,7 +580,7 @@ struct emergencyNode *createEmergencyNode(int patientID, int emergencyScore)
 }
 
 /*
-Function: isEmergencyEmpty(POIINTER TO EmergencyQueue)
+Function: isEmergencyEmpty(POINTER TO EmergencyQueue)
 
 Purpose:
 Check whether the emergency priority queue is empty.
