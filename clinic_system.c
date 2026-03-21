@@ -74,10 +74,11 @@ struct waitingNode {
     struct waitingNode* next;
 };
 
-struct Queue {
-    struct waitingNode* front;
-    struct waitingNode* rear;
-    int size; // optional
+struct Queue
+{
+   struct waitingNode *front;
+   struct waitingNode *rear;
+   int size; // optional
 };
 
 struct Queue clinicQueue;
@@ -280,7 +281,6 @@ void deletePatient(int patientID)
       }
    }
    printf("Patient with ID %d not found.\n", patientID);
-
 }
 
 /*
@@ -387,17 +387,18 @@ void printPratients()
    for (int i = 0; i < patientCount; i++)
    {
       printf("Patient ID: %d, Name: %s, Age: %d, Gender: %s, Contact: %s\n",
-             patients[i].patientID, patients[i].name, patients[i].age, patients[i].gender , patients[i].contact);
+             patients[i].patientID, patients[i].name, patients[i].age, patients[i].gender, patients[i].contact);
    }
 }
 
 /* ==================================================
    QUEUE FUNCTIONS - Dimanya
    ================================================== */
-void initializeWaitingQueue(struct Queue* queue) {
-    queue->front = NULL;
-    queue->rear = NULL;
-    queue->size = 0;
+void initializeWaitingQueue(struct Queue *queue)
+{
+   queue->front = NULL;
+   queue->rear = NULL;
+   queue->size = 0;
 }
 
 struct waitingNode* createWaitingPatientNode(int patientID, char name[]) {
@@ -426,37 +427,45 @@ waitingQueue[]
 front
 rear
 */
-void enqueuePatient(struct Queue* queue, int patientID) {
-    int exists = 0;
-    for (int i = 0; i < patientCount; i++) {
-        if (patients[i].patientID == patientID) {
-            exists = 1;
-            break;
-        }
-    }
-    if (!exists) {
-        printf("Patient ID %d is not registered. Cannot add to the queue.\n", patientID);
-        return;
-    }
-    if (queue->size >= MAX_QUEUE_SIZE) {
-        printf("The patient queue is full! Patient %d cannot be added.\n", patientID);
-        return;
-    }
+void enqueuePatient(struct Queue *queue, int patientID)
+{
+   int exists = 0;
+   for (int i = 0; i < patientCount; i++)
+   {
+      if (patients[i].patientID == patientID)
+      {
+         exists = 1;
+         break;
+      }
+   }
+   if (!exists)
+   {
+      printf("Patient ID %d is not registered. Cannot add to the queue.\n", patientID);
+      return;
+   }
+   if (queue->size >= MAX_QUEUE_SIZE)
+   {
+      printf("The patient queue is full! Patient %d cannot be added.\n", patientID);
+      return;
+   }
 
-    struct waitingNode* newNode = createWaitingPatientNode(patientID, patients[patientID - 1].name);
-    if (newNode == NULL) {
-        printf("Memory allocation failed for patient %d\n", patientID);
-        return;
-    }
+   struct waitingNode* newNode = createWaitingPatientNode(patientID, patients[patientID - 1].name);
+   if (newNode == NULL) {
+      printf("Memory allocation failed for patient %d\n", patientID);
+      return;
+   }
 
-    if (queue->front == NULL) {  // empty queue
-        queue->front = newNode;
-        queue->rear = newNode;
-    } else {  // add to rear
-        queue->rear->next = newNode;
-        newNode->prev = queue->rear;
-        queue->rear = newNode;
-    }
+   if (queue->front == NULL)
+   { // empty queue
+      queue->front = newNode;
+      queue->rear = newNode;
+   }
+   else
+   { // add to rear
+      queue->rear->next = newNode;
+      newNode->prev = queue->rear;
+      queue->rear = newNode;
+   }
 
     queue->size++;
     printf("Patient %d - %s added to the queue successfully.\n", patientID, newNode->name);
@@ -515,7 +524,7 @@ Displays the patientID at the front
 without removing it.
 */
 
-int peekNextPatient(struct Queue* queue)
+int peekNextPatient(struct Queue *queue)
 {
     if (queue->front == NULL) {
         printf("Queue is empty\n");
@@ -533,11 +542,13 @@ Purpose:
 Display all patients waiting in the queue.
 */
 
-void displayQueue(struct Queue* queue) {
-    if(queue->front == NULL){
-        printf("The waiting queue is empty.\n");
-        return;
-    }
+void displayQueue(struct Queue *queue)
+{
+   if (queue->front == NULL)
+   {
+      printf("The waiting queue is empty.\n");
+      return;
+   }
 
     printf("Patients in the waiting queue:\n");
     struct waitingNode* temp = queue->front;
@@ -554,15 +565,16 @@ Purpose:
 Return number of patients in queue.
 */
 
-int queueSize(struct Queue* queue)
+int queueSize(struct Queue *queue)
 {
-    int count = 0;
-    struct waitingNode* temp = queue->front;
-    while(temp != NULL) {
-        count++;
-        temp = temp->next;
-    }
-    return count;
+   int count = 0;
+   struct waitingNode *temp = queue->front;
+   while (temp != NULL)
+   {
+      count++;
+      temp = temp->next;
+   }
+   return count;
 }
 
 /* ==================================================
@@ -590,7 +602,7 @@ struct emergencyNode *createEmergencyNode(int patientID, int emergencyScore)
 }
 
 /*
-Function: isEmergencyEmpty()
+Function: isEmergencyEmpty(POINTER TO EmergencyQueue)
 
 Purpose:
 Check whether the emergency priority queue is empty.
@@ -617,7 +629,7 @@ int isEmergencyEmpty(struct emergencyQueue *queue)
 }
 
 /*
-Function: enqueueEmergency()
+Function: enqueueEmergency(POINTER TO EmergencyQueue, patientID, emergencyScore)
 
 Purpose:
 Add a patient to the emergency priority queue.
@@ -700,7 +712,7 @@ void enqueueEmergency(struct emergencyQueue *queue, int patientID, int emergency
 }
 
 /*
-Function: dequeueEmergency()
+Function: dequeueEmergency(POINTER TO EmergencyQueue)
 
 Purpose:
 Remove and return the highest priority emergency patient.
@@ -718,12 +730,37 @@ queue->front
 queue->rear
 */
 
-void dequeueEmergency()
+void dequeueEmergency(struct emergencyQueue *queue)
 {
+   struct emergencyNode *temp;
+   if (isEmergencyEmpty(queue))
+   {
+      printf("Emergency queue is empty.\n");
+      return;
+   }
+   temp = queue->front;
+   if (queue->front == queue->rear)
+   {
+      queue->front = NULL;
+      queue->rear = NULL;
+   }
+   else
+   {
+      queue->front = temp->next;
+      if (queue->front != NULL)
+      {
+         queue->front->prev = NULL;
+      }
+   }
+   printf("Emergency Patient ID: %d\n", temp->patientID);
+   printf("Emergency condition: %d\n", temp->emergencyScore);
+   printf("Sent Patient for treatments successfully.\n");
+   free(temp);
+   temp = NULL;
 }
 
 /*
-Function: peekEmergency()
+Function: peekEmergency(POINTER TO EmergencyQueue)
 
 Purpose:
 View the highest priority emergency patient.
@@ -740,12 +777,20 @@ Important Variables:
 queue->front
 */
 
-void peekEmergency()
+void peekEmergency(struct emergencyQueue *queue)
 {
+   if (isEmergencyEmpty(queue))
+   {
+      printf("Emergency queue is empty\n");
+   }
+   else
+   {
+      printf("Emergency Patient ID %d has emergency score of %d\n", queue->front->patientID, queue->front->emergencyScore);
+   }
 }
 
 /*
-Function: displayEmergencyQueue()
+Function: displayEmergencyQueue(POINTER TO EmergencyQueue)
 
 Purpose:
 Display all patients in the emergency priority queue.
@@ -967,11 +1012,11 @@ void addDrug()
     printf("Enter Drug Name (UPPERCASE,no spaces): ");
     scanf("%s", newDrug->name);
 
-    printf("Enter Quantity: ");
-    scanf("%d", &newDrug->quantity);
+   printf("Enter Quantity: ");
+   scanf("%d", &newDrug->quantity);
 
-    printf("Enter Unit Price: ");
-    scanf("%f", &newDrug->unitPrice);
+   printf("Enter Unit Price: ");
+   scanf("%f", &newDrug->unitPrice);
 
     newDrug->next = NULL;
     newDrug->prev = NULL;
@@ -990,17 +1035,19 @@ void addDrug()
         temp = temp->next;
     }
 
-    if (inventoryHead == NULL) {
-        inventoryHead = inventoryTail = newDrug;
-    } else {
-        inventoryTail->next = newDrug;
-        newDrug->prev = inventoryTail;
-        inventoryTail = newDrug;
-    }
+   if (inventoryHead == NULL)
+   {
+      inventoryHead = inventoryTail = newDrug;
+   }
+   else
+   {
+      inventoryTail->next = newDrug;
+      newDrug->prev = inventoryTail;
+      inventoryTail = newDrug;
+   }
 
-    printf("Drug added successfully!\n");
+   printf("Drug added successfully!\n");
 }
-
 
 /*
 Function: updateDrugStock()
@@ -1181,20 +1228,22 @@ inventoryTail
 
 void displayInventory()
 {
-    struct Drug* temp = inventoryHead;
+   struct Drug *temp = inventoryHead;
 
-    if (temp == NULL) {
-        printf("Inventory is empty!\n");
-        return;
-    }
+   if (temp == NULL)
+   {
+      printf("Inventory is empty!\n");
+      return;
+   }
 
-    printf("\n--- Drug Inventory ---\n");
+   printf("\n--- Drug Inventory ---\n");
 
-    while (temp != NULL) {
-        printf("ID: %d | Name: %s | Qty: %d | Price: %.2f\n",
-               temp->drugID, temp->name, temp->quantity, temp->unitPrice);
-        temp = temp->next;
-    }
+   while (temp != NULL)
+   {
+      printf("ID: %d | Name: %s | Qty: %d | Price: %.2f\n",
+             temp->drugID, temp->name, temp->quantity, temp->unitPrice);
+      temp = temp->next;
+   }
 }
 
 /*
@@ -1214,11 +1263,55 @@ inventoryHead
 
 void sortDrugsByName()
 {
+   if (inventoryHead == NULL)
+   {
+      printf("Inventory is empty!\n");
+      return;
+   }
     if (inventoryHead == NULL) {
         printf("Inventory is empty.\n");
         return;
     }
 
+   int swapped;
+   struct Drug *ptr;
+
+   do
+   {
+      swapped = 0;
+      ptr = inventoryHead;
+
+      while (ptr->next != NULL)
+      {
+
+         if (strcmp(ptr->name, ptr->next->name) > 0)
+         {
+
+            // Swap ONLY data (not pointers)
+            int tempID = ptr->drugID;
+            char tempName[50];
+            int tempQty = ptr->quantity;
+            float tempPrice = ptr->unitPrice;
+
+            strcpy(tempName, ptr->name);
+
+            ptr->drugID = ptr->next->drugID;
+            strcpy(ptr->name, ptr->next->name);
+            ptr->quantity = ptr->next->quantity;
+            ptr->unitPrice = ptr->next->unitPrice;
+
+            ptr->next->drugID = tempID;
+            strcpy(ptr->next->name, tempName);
+            ptr->next->quantity = tempQty;
+            ptr->next->unitPrice = tempPrice;
+
+            swapped = 1;
+         }
+
+         ptr = ptr->next;
+      }
+
+   } while (swapped);
     struct Drug tempArray[100];
     int count = 0;
 
@@ -1255,7 +1348,6 @@ void sortDrugsByName()
                tempArray[i].unitPrice);
     }
 }
-
 
 /* ==================================================
    PHARMACY ORDER FUNCTIONS - Harsha
@@ -1304,7 +1396,8 @@ void createOrder()
    getchar(); // Consume trailing newline
 
    char addMore;
-   do {
+   do
+   {
       if (pharmacyTop >= 49)
       {
          printf("Pharmacy stack is full! Cannot add more orders.\n");
@@ -1319,8 +1412,10 @@ void createOrder()
       char dName[50] = "";
       temp = inventoryHead;
       int found = 0;
-      while(temp != NULL) {
-         if (temp->drugID == dID) {
+      while (temp != NULL)
+      {
+         if (temp->drugID == dID)
+         {
             strcpy(dName, temp->name);
             found = 1;
             break;
@@ -1328,7 +1423,8 @@ void createOrder()
          temp = temp->next;
       }
 
-      if (!found) {
+      if (!found)
+      {
          printf("Invalid Drug ID! Order for this ID cancelled.\n");
          getchar();
       } else {
@@ -1337,7 +1433,7 @@ void createOrder()
          getchar(); // Consume trailing newline
 
          pharmacyTop++;
-         pharmacyStack[pharmacyTop].patientID = pID; // Assigned patient ID
+         pharmacyStack[pharmacyTop].patientID = pID;         // Assigned patient ID
          strcpy(pharmacyStack[pharmacyTop].drugName, dName); // Still storing Name in order struct
          pharmacyStack[pharmacyTop].quantity = qty;
          pharmacyStack[pharmacyTop].totalPrice = 0.0;
@@ -1648,6 +1744,7 @@ int main()
    int choice, workflow;
    initializeEmergencyQueue(&EMERGENCY_QUEUE);
    initializeDummyDrugs();
+   int exitKey = 1;
 
    //  while(1)
    // {
@@ -1779,7 +1876,7 @@ int main()
    //    }
    // }
 
-   while (1)
+   while (exitKey)
    {
       printf("\nSelect workflow:\n");
       printf("1. Patient Registration\n");
@@ -1789,6 +1886,7 @@ int main()
       printf("5. Pharmacy inventory management\n");
       printf("6. Medicine Purchase Tracking\n");
       printf("7. Billing and payment processing\n");
+      printf("0. Exit System\n");
       printf("Enter choice: ");
       scanf("%d", &workflow);
       switch (workflow)
@@ -1949,7 +2047,15 @@ int main()
             switch (choice)
             {
             case 1:
-               isEmergencyEmpty(&EMERGENCY_QUEUE);
+               // int empty = isEmergencyEmpty(&EMERGENCY_QUEUE);
+               if (isEmergencyEmpty(&EMERGENCY_QUEUE))
+               {
+                  printf("Emergency queue is empty\n");
+               }
+               else
+               {
+                  printf("There are patients who need immediate attention!\n");
+               }
                break;
             case 2:
                printf("--INSERT PATIENT TO EMERGENCY PRIORITY QUEUE--\n");
@@ -1965,7 +2071,12 @@ int main()
                int emergencyScore;
                if (scanf(" %d", &emergencyScore) != 1)
                {
-                  printf("Invalid emergency condition input\n");
+                  int ch;
+                  /* Clear invalid input from the buffer */
+                  while ((ch = getchar()) != '\n' && ch != EOF)
+                  {
+                  }
+                  printf("Invalid emergency condition input. Please enter a numeric value.\n");
                   break;
                }
                if (emergencyScore < 1 || emergencyScore > 3)
@@ -1979,17 +2090,18 @@ int main()
                displayEmergencyQueue(&EMERGENCY_QUEUE);
                break;
             case 3:
-               dequeueEmergency();
+               dequeueEmergency(&EMERGENCY_QUEUE);
                break;
             case 4:
-               peekEmergency();
+               peekEmergency(&EMERGENCY_QUEUE);
                break;
             case 5:
                displayEmergencyQueue(&EMERGENCY_QUEUE);
                break;
             case 0:
                printf("Returning to Main Menu...\n");
-                break;;
+               break;
+               ;
             default:
                printf("Invalid option\n");
             }
@@ -2029,7 +2141,8 @@ int main()
                break;
             case 0:
                printf("Returning to Main Menu...\n");
-                break;;
+               break;
+               ;
             default:
                printf("Invalid option\n");
             }
@@ -2107,7 +2220,8 @@ int main()
                break;
             case 0:
                printf("Returning to Main Menu...\n");
-                break;;
+               break;
+               ;
             default:
                printf("Invalid option\n");
             }
@@ -2147,13 +2261,16 @@ int main()
                break;
             case 0:
                printf("Returning to Main Menu...\n");
-                break;;
+               break;
             default:
                printf("Invalid option.\n");
             }
             if (choice == 0)
                break;
          }
+         break;
+      case 0:
+         exitKey = 0;
          break;
       default:
          printf("Invalid workflow selection.\n");
