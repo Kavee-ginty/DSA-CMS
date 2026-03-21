@@ -1803,8 +1803,8 @@ int main()
             switch (choice)
             {
             case 1:
-               int empty = isEmergencyEmpty(&EMERGENCY_QUEUE);
-               if(empty){
+               //int empty = isEmergencyEmpty(&EMERGENCY_QUEUE);
+               if(isEmergencyEmpty(&EMERGENCY_QUEUE)){
                   printf("Emergency queue is empty\n");
                }
                else{
