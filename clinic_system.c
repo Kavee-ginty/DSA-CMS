@@ -1805,7 +1805,7 @@ int main()
                   printf("Emergency queue is empty\n");
                }
                else{
-                  printf("There are patients who need imediate attention!\n");
+                  printf("There are patients who need immediate attention!\n");
                }
                break;
             case 2:
