@@ -601,6 +601,21 @@
       return newNode;
    }
 
+   printf("\nEnter Treatment Id: ");
+   scanf("%d", &newNode->treatmentID);
+   while(getchar() != '\n');
+
+   printf("Enter Patient Id for treatment: ");
+   scanf("%d", &newNode->patientID);
+   while(getchar() != '\n');
+
+   printf("Enter Treatment name: ");
+   fgets(newNode->treatmentName, sizeof(newNode->treatmentName), stdin);
+   // Remove the newline character from the end of the string
+   newNode->treatmentName[strcspn(newNode->treatmentName, "\n")] = '\0';
+
+   printf("Enter cost for all treatments: ");
+   scanf("%f", &newNode->cost);
    /*
    Function: isEmergencyEmpty(POINTER TO EmergencyQueue)
 
@@ -626,6 +641,15 @@
       {
          return 0;
       }
+      temp->next = newNode;
+      treatmentTail = newNode;
+   }
+
+   printf("\nTreatment added successfully!\n");
+}
+
+/*
+Function: deleteTreatment()
    }
 
    /*
@@ -648,6 +672,57 @@
    2 → Urgent
    1 → Non-Urgent     (lowest priority)
 
+void deleteTreatment()
+{
+   int id;
+   printf("\nEnter Treatment Id to delete: ");
+   scanf("%d", &id);
+   
+   if (id <= 0) {
+      printf("\nInvalid Treatment ID! it must be positive number\n");
+      return;
+   }
+   
+   struct Treatment* temp = treatmentHead; 
+
+   while(temp != NULL) {
+      if (temp->treatmentID == id) {
+         if (temp == treatmentHead) {
+            if (temp == treatmentTail) {
+               treatmentHead = treatmentTail = NULL;
+               free(temp);
+            }
+            else {
+               struct Treatment* nodeToDelete = temp;
+               treatmentHead = temp->next;
+               free(nodeToDelete);
+            }
+         }
+         else {
+            struct Treatment* todelete = treatmentHead;
+            if (temp == treatmentTail) {
+               while(todelete->next != temp) {
+                  todelete = todelete->next;
+               }
+               todelete->next = NULL;
+               treatmentTail = todelete;
+               free(temp);
+            }
+            else{
+               for (; todelete->next != temp; todelete = todelete->next);
+               todelete->next = temp->next;
+               free(temp);
+            }
+         }
+         printf("Treatment with ID %d deleted successfully.\n", id);
+         return;
+      }
+      else{
+         temp = temp->next;
+      }
+   }
+   printf("Treatment with ID %d not found.\n", id);
+}
    */
 
    void enqueueEmergency(struct emergencyQueue *queue, int patientID, int emergencyScore)
@@ -722,6 +797,11 @@
    emergency priority queue, which is always the patient
    with the highest emergency score.
 
+   while(temp != NULL) {
+      printf("Patient ID: %d | Treatment ID: %d | Description: %s | Cost: %.2f\n", 
+             temp->patientID, temp->treatmentID, temp->treatmentName, temp->cost);
+      temp = temp->next;
+   }
    The front pointer is updated to the next node after
    removal. Memory of the removed node is freed.
 
