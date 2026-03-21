@@ -66,16 +66,18 @@ int patientCount = 20;
 
 #define MAX_QUEUE_SIZE 50
 
-struct waitingNode {
-    int patientID;
-    struct waitingNode* prev;
-    struct waitingNode* next;
+struct waitingNode
+{
+   int patientID;
+   struct waitingNode *prev;
+   struct waitingNode *next;
 };
 
-struct Queue {
-    struct waitingNode* front;
-    struct waitingNode* rear;
-    int size; // optional
+struct Queue
+{
+   struct waitingNode *front;
+   struct waitingNode *rear;
+   int size; // optional
 };
 
 struct Queue clinicQueue;
@@ -135,37 +137,40 @@ struct Drug
 struct Drug *inventoryHead = NULL;
 struct Drug *inventoryTail = NULL;
 
-void initializeDummyDrugs() {
-    // Array of dummy data
-    struct Drug dummyDrugs[10] = {
-        {1, "Paracetamol", 100, 2.50, NULL, NULL},
-        {2, "Amoxicillin", 50, 5.00, NULL, NULL},
-        {3, "Ibuprofen", 200, 3.20, NULL, NULL},
-        {4, "Cetirizine", 150, 1.50, NULL, NULL},
-        {5, "Omeprazole", 80, 4.75, NULL, NULL},
-        {6, "Aspirin", 300, 1.80, NULL, NULL},
-        {7, "Loratadine", 120, 2.00, NULL, NULL},
-        {8, "Metformin", 90, 5.50, NULL, NULL},
-        {9, "Azithromycin", 60, 8.00, NULL, NULL},
-        {10, "Diclofenac", 110, 3.50, NULL, NULL}
-    };
+void initializeDummyDrugs()
+{
+   // Array of dummy data
+   struct Drug dummyDrugs[10] = {
+       {1, "Paracetamol", 100, 2.50, NULL, NULL},
+       {2, "Amoxicillin", 50, 5.00, NULL, NULL},
+       {3, "Ibuprofen", 200, 3.20, NULL, NULL},
+       {4, "Cetirizine", 150, 1.50, NULL, NULL},
+       {5, "Omeprazole", 80, 4.75, NULL, NULL},
+       {6, "Aspirin", 300, 1.80, NULL, NULL},
+       {7, "Loratadine", 120, 2.00, NULL, NULL},
+       {8, "Metformin", 90, 5.50, NULL, NULL},
+       {9, "Azithromycin", 60, 8.00, NULL, NULL},
+       {10, "Diclofenac", 110, 3.50, NULL, NULL}};
 
-    // Insert them into linked list 
-    for(int i = 0; i < 10; i++) {
-        struct Drug* newDrug = (struct Drug*)malloc(sizeof(struct Drug));
-        *newDrug = dummyDrugs[i];
-        
-        if (inventoryHead == NULL) {
-            inventoryHead = newDrug;
-            inventoryTail = newDrug;
-        } else {
-            inventoryTail->next = newDrug;
-            newDrug->prev = inventoryTail;
-            inventoryTail = newDrug;
-        }
-    }
+   // Insert them into linked list
+   for (int i = 0; i < 10; i++)
+   {
+      struct Drug *newDrug = (struct Drug *)malloc(sizeof(struct Drug));
+      *newDrug = dummyDrugs[i];
+
+      if (inventoryHead == NULL)
+      {
+         inventoryHead = newDrug;
+         inventoryTail = newDrug;
+      }
+      else
+      {
+         inventoryTail->next = newDrug;
+         newDrug->prev = inventoryTail;
+         inventoryTail = newDrug;
+      }
+   }
 }
-
 
 /* ==================================================
    6. PHARMACY ORDERS - Harsha
@@ -274,7 +279,6 @@ void deletePatient(int patientID)
       }
    }
    printf("Patient with ID %d not found.\n", patientID);
-
 }
 
 /*
@@ -378,28 +382,31 @@ void printPratients()
    for (int i = 0; i < patientCount; i++)
    {
       printf("Patient ID: %d, Name: %s, Age: %d, Gender: %s, Contact: %s\n",
-             patients[i].patientID, patients[i].name, patients[i].age, patients[i].gender , patients[i].contact);
-   } 
+             patients[i].patientID, patients[i].name, patients[i].age, patients[i].gender, patients[i].contact);
+   }
 }
 
 /* ==================================================
    QUEUE FUNCTIONS - Dimanya
    ================================================== */
-void initializeWaitingQueue(struct Queue* queue) {
-    queue->front = NULL;
-    queue->rear = NULL;
-    queue->size = 0;
+void initializeWaitingQueue(struct Queue *queue)
+{
+   queue->front = NULL;
+   queue->rear = NULL;
+   queue->size = 0;
 }
 
-struct waitingNode* createWaitingPatientNode(int patientID) {
-    struct waitingNode* newNode = (struct waitingNode*)malloc(sizeof(struct waitingNode));
-    if (newNode == NULL) {
-        return NULL;
-    }
-    newNode->patientID = patientID;
-    newNode->prev = NULL;
-    newNode->next = NULL;
-    return newNode;
+struct waitingNode *createWaitingPatientNode(int patientID)
+{
+   struct waitingNode *newNode = (struct waitingNode *)malloc(sizeof(struct waitingNode));
+   if (newNode == NULL)
+   {
+      return NULL;
+   }
+   newNode->patientID = patientID;
+   newNode->prev = NULL;
+   newNode->next = NULL;
+   return newNode;
 }
 /*
 Function: enqueuePatient()
@@ -416,40 +423,49 @@ waitingQueue[]
 front
 rear
 */
-void enqueuePatient(struct Queue* queue, int patientID) {
-    int exists = 0;
-    for (int i = 0; i < patientCount; i++) {
-        if (patients[i].patientID == patientID) {
-            exists = 1;
-            break;
-        }
-    }
-    if (!exists) {
-        printf("Patient ID %d is not registered. Cannot add to the queue.\n", patientID);
-        return;
-    }
-    if (queue->size >= MAX_QUEUE_SIZE) {
-        printf("The patient queue is full! Patient %d cannot be added.\n", patientID);
-        return;
-    }
+void enqueuePatient(struct Queue *queue, int patientID)
+{
+   int exists = 0;
+   for (int i = 0; i < patientCount; i++)
+   {
+      if (patients[i].patientID == patientID)
+      {
+         exists = 1;
+         break;
+      }
+   }
+   if (!exists)
+   {
+      printf("Patient ID %d is not registered. Cannot add to the queue.\n", patientID);
+      return;
+   }
+   if (queue->size >= MAX_QUEUE_SIZE)
+   {
+      printf("The patient queue is full! Patient %d cannot be added.\n", patientID);
+      return;
+   }
 
-    struct waitingNode* newNode = createWaitingPatientNode(patientID);
-    if (newNode == NULL) {
-        printf("Memory allocation failed for patient %d\n", patientID);
-        return;
-    }
+   struct waitingNode *newNode = createWaitingPatientNode(patientID);
+   if (newNode == NULL)
+   {
+      printf("Memory allocation failed for patient %d\n", patientID);
+      return;
+   }
 
-    if (queue->front == NULL) {  // empty queue
-        queue->front = newNode;
-        queue->rear = newNode;
-    } else {  // add to rear
-        queue->rear->next = newNode;
-        newNode->prev = queue->rear;
-        queue->rear = newNode;
-    }
+   if (queue->front == NULL)
+   { // empty queue
+      queue->front = newNode;
+      queue->rear = newNode;
+   }
+   else
+   { // add to rear
+      queue->rear->next = newNode;
+      newNode->prev = queue->rear;
+      queue->rear = newNode;
+   }
 
-    queue->size++;
-    printf("Patient %d added to the queue successfully.\n", patientID);
+   queue->size++;
+   printf("Patient %d added to the queue successfully.\n", patientID);
 }
 
 /*
@@ -483,14 +499,17 @@ Displays the patientID at the front
 without removing it.
 */
 
-int peekNextPatient(struct Queue* queue)
+int peekNextPatient(struct Queue *queue)
 {
-    if (queue->front == NULL) {
-        printf("Queue is empty\n");
-        return '\0';
-    } else {
-        return queue->front->patientID;
-    }
+   if (queue->front == NULL)
+   {
+      printf("Queue is empty\n");
+      return '\0';
+   }
+   else
+   {
+      return queue->front->patientID;
+   }
 }
 
 /*
@@ -500,18 +519,21 @@ Purpose:
 Display all patients waiting in the queue.
 */
 
-void displayQueue(struct Queue* queue) {
-    if(queue->front == NULL){
-        printf("The waiting queue is empty.\n");
-        return;
-    }
+void displayQueue(struct Queue *queue)
+{
+   if (queue->front == NULL)
+   {
+      printf("The waiting queue is empty.\n");
+      return;
+   }
 
-    printf("Patients in the waiting queue:\n");
-    struct waitingNode* temp = queue->front;
-    while(temp != NULL){
-        printf("Patient ID: %d\n", temp->patientID);
-        temp = temp->next;
-    }
+   printf("Patients in the waiting queue:\n");
+   struct waitingNode *temp = queue->front;
+   while (temp != NULL)
+   {
+      printf("Patient ID: %d\n", temp->patientID);
+      temp = temp->next;
+   }
 }
 
 /*
@@ -521,15 +543,16 @@ Purpose:
 Return number of patients in queue.
 */
 
-int queueSize(struct Queue* queue)
+int queueSize(struct Queue *queue)
 {
-    int count = 0;
-    struct waitingNode* temp = queue->front;
-    while(temp != NULL) {
-        count++;
-        temp = temp->next;
-    }
-    return count;
+   int count = 0;
+   struct waitingNode *temp = queue->front;
+   while (temp != NULL)
+   {
+      count++;
+      temp = temp->next;
+   }
+   return count;
 }
 
 /* ==================================================
@@ -687,19 +710,23 @@ queue->rear
 
 void dequeueEmergency(struct emergencyQueue *queue)
 {
-   struct emergencyNode* temp;
-   if (isEmergencyEmpty(queue)){
+   struct emergencyNode *temp;
+   if (isEmergencyEmpty(queue))
+   {
       printf("Emergency queue is empty.\n");
       return;
    }
    temp = queue->front;
-   if(queue->front == queue->rear){
+   if (queue->front == queue->rear)
+   {
       queue->front = NULL;
       queue->rear = NULL;
    }
-   else{
+   else
+   {
       queue->front = temp->next;
-      if (queue->front != NULL) {
+      if (queue->front != NULL)
+      {
          queue->front->prev = NULL;
       }
    }
@@ -728,12 +755,14 @@ Important Variables:
 queue->front
 */
 
-void peekEmergency(struct emergencyQueue* queue)
+void peekEmergency(struct emergencyQueue *queue)
 {
-   if(isEmergencyEmpty(queue)){
+   if (isEmergencyEmpty(queue))
+   {
       printf("Emergency queue is empty\n");
    }
-   else{
+   else
+   {
       printf("Emergency Patient ID %d has emergency score of %d\n", queue->front->patientID, queue->front->emergencyScore);
    }
 }
@@ -904,35 +933,37 @@ inventoryTail
 
 void addDrug()
 {
-    
-    struct Drug* newDrug = (struct Drug*)malloc(sizeof(struct Drug));
 
-    printf("Enter Drug ID: ");
-    scanf("%d", &newDrug->drugID);
+   struct Drug *newDrug = (struct Drug *)malloc(sizeof(struct Drug));
 
-    printf("Enter Drug Name (no spaces): ");
-    scanf("%s", newDrug->name); 
+   printf("Enter Drug ID: ");
+   scanf("%d", &newDrug->drugID);
 
-    printf("Enter Quantity: ");
-    scanf("%d", &newDrug->quantity);
+   printf("Enter Drug Name (no spaces): ");
+   scanf("%s", newDrug->name);
 
-    printf("Enter Unit Price: ");
-    scanf("%f", &newDrug->unitPrice);
+   printf("Enter Quantity: ");
+   scanf("%d", &newDrug->quantity);
 
-    newDrug->next = NULL;
-    newDrug->prev = NULL;
+   printf("Enter Unit Price: ");
+   scanf("%f", &newDrug->unitPrice);
 
-    if (inventoryHead == NULL) {
-        inventoryHead = inventoryTail = newDrug;
-    } else {
-        inventoryTail->next = newDrug;
-        newDrug->prev = inventoryTail;
-        inventoryTail = newDrug;
-    }
+   newDrug->next = NULL;
+   newDrug->prev = NULL;
 
-    printf("Drug added successfully!\n");
+   if (inventoryHead == NULL)
+   {
+      inventoryHead = inventoryTail = newDrug;
+   }
+   else
+   {
+      inventoryTail->next = newDrug;
+      newDrug->prev = inventoryTail;
+      inventoryTail = newDrug;
+   }
+
+   printf("Drug added successfully!\n");
 }
-
 
 /*
 Function: updateDrugStock()
@@ -951,29 +982,35 @@ inventoryHead
 
 void updateDrugStock()
 {
-    int id, newQty;
-    printf("Enter Drug ID: ");
-    scanf("%d", &id);
+   int id, newQty;
+   printf("Enter Drug ID: ");
+   scanf("%d", &id);
 
-    struct Drug* temp = inventoryHead;
+   struct Drug *temp = inventoryHead;
 
-    while (temp != NULL) {
-        if (temp->drugID == id) {
-            printf("Enter new quantity: ");
-            scanf("%d", &newQty);
-            if(newQty < 0) {
-                printf("Invalid quantity!\n"); 
-                return; }
-            else{
+   while (temp != NULL)
+   {
+      if (temp->drugID == id)
+      {
+         printf("Enter new quantity: ");
+         scanf("%d", &newQty);
+         if (newQty < 0)
+         {
+            printf("Invalid quantity!\n");
+            return;
+         }
+         else
+         {
             temp->quantity = newQty;
 
             printf("Stock updated!\n");
-            return; }
-        }
-        temp = temp->next;
-    }
+            return;
+         }
+      }
+      temp = temp->next;
+   }
 
-    printf("Drug not found!\n");
+   printf("Drug not found!\n");
 }
 
 /*
@@ -993,22 +1030,24 @@ inventoryHead
 
 void searchDrug()
 {
-    int id;
-    printf("Enter Drug ID to search: ");
-    scanf("%d", &id);
+   int id;
+   printf("Enter Drug ID to search: ");
+   scanf("%d", &id);
 
-    struct Drug* temp = inventoryHead;
+   struct Drug *temp = inventoryHead;
 
-    while (temp != NULL) {
-        if (temp->drugID == id) {
-            printf("Found: %s | Qty: %d | Price: %.2f\n",
-                   temp->name, temp->quantity, temp->unitPrice);
-            return;
-        }
-        temp = temp->next;
-    }
+   while (temp != NULL)
+   {
+      if (temp->drugID == id)
+      {
+         printf("Found: %s | Qty: %d | Price: %.2f\n",
+                temp->name, temp->quantity, temp->unitPrice);
+         return;
+      }
+      temp = temp->next;
+   }
 
-    printf("Drug not found!\n");
+   printf("Drug not found!\n");
 }
 
 /*
@@ -1029,20 +1068,22 @@ inventoryTail
 
 void displayInventory()
 {
-    struct Drug* temp = inventoryHead;
+   struct Drug *temp = inventoryHead;
 
-    if (temp == NULL) {
-        printf("Inventory is empty!\n");
-        return;
-    }
+   if (temp == NULL)
+   {
+      printf("Inventory is empty!\n");
+      return;
+   }
 
-    printf("\n--- Drug Inventory ---\n");
+   printf("\n--- Drug Inventory ---\n");
 
-    while (temp != NULL) {
-        printf("ID: %d | Name: %s | Qty: %d | Price: %.2f\n",
-               temp->drugID, temp->name, temp->quantity, temp->unitPrice);
-        temp = temp->next;
-    }
+   while (temp != NULL)
+   {
+      printf("ID: %d | Name: %s | Qty: %d | Price: %.2f\n",
+             temp->drugID, temp->name, temp->quantity, temp->unitPrice);
+      temp = temp->next;
+   }
 }
 
 /*
@@ -1062,51 +1103,54 @@ inventoryHead
 
 void sortDrugsByName()
 {
-    if (inventoryHead == NULL) {
-        printf("Inventory is empty!\n");
-        return;
-    }
+   if (inventoryHead == NULL)
+   {
+      printf("Inventory is empty!\n");
+      return;
+   }
 
-    int swapped;
-    struct Drug* ptr;
+   int swapped;
+   struct Drug *ptr;
 
-    do {
-        swapped = 0;
-        ptr = inventoryHead;
+   do
+   {
+      swapped = 0;
+      ptr = inventoryHead;
 
-        while (ptr->next != NULL) {
+      while (ptr->next != NULL)
+      {
 
-            if (strcmp(ptr->name, ptr->next->name) > 0) {
+         if (strcmp(ptr->name, ptr->next->name) > 0)
+         {
 
-                // Swap ONLY data (not pointers)
-                int tempID = ptr->drugID;
-                char tempName[50];
-                int tempQty = ptr->quantity;
-                float tempPrice = ptr->unitPrice;
+            // Swap ONLY data (not pointers)
+            int tempID = ptr->drugID;
+            char tempName[50];
+            int tempQty = ptr->quantity;
+            float tempPrice = ptr->unitPrice;
 
-                strcpy(tempName, ptr->name);
+            strcpy(tempName, ptr->name);
 
-                ptr->drugID = ptr->next->drugID;
-                strcpy(ptr->name, ptr->next->name);
-                ptr->quantity = ptr->next->quantity;
-                ptr->unitPrice = ptr->next->unitPrice;
+            ptr->drugID = ptr->next->drugID;
+            strcpy(ptr->name, ptr->next->name);
+            ptr->quantity = ptr->next->quantity;
+            ptr->unitPrice = ptr->next->unitPrice;
 
-                ptr->next->drugID = tempID;
-                strcpy(ptr->next->name, tempName);
-                ptr->next->quantity = tempQty;
-                ptr->next->unitPrice = tempPrice;
+            ptr->next->drugID = tempID;
+            strcpy(ptr->next->name, tempName);
+            ptr->next->quantity = tempQty;
+            ptr->next->unitPrice = tempPrice;
 
-                swapped = 1;
-            }
+            swapped = 1;
+         }
 
-            ptr = ptr->next;
-        }
+         ptr = ptr->next;
+      }
 
-    } while (swapped);
+   } while (swapped);
 
-    printf("Drugs sorted by name (A-Z)!\n");
+   printf("Drugs sorted by name (A-Z)!\n");
 }
-
 
 /* ==================================================
    PHARMACY ORDER FUNCTIONS - Harsha
@@ -1138,11 +1182,12 @@ void createOrder()
       printf("No drugs available in inventory.\n");
       return; // Exit early since user can't order anything
    }
-   else{
-   
+   else
+   {
+
       while (temp != NULL)
       {
-         printf("ID: %d | Name: %s | Qty: %d | Price: %.2f\n", 
+         printf("ID: %d | Name: %s | Qty: %d | Price: %.2f\n",
                 temp->drugID, temp->name, temp->quantity, temp->unitPrice);
          temp = temp->next;
       }
@@ -1155,7 +1200,8 @@ void createOrder()
    getchar(); // Consume trailing newline
 
    char addMore;
-   do {
+   do
+   {
       if (pharmacyTop >= 49)
       {
          printf("Pharmacy stack is full! Cannot add more orders.\n");
@@ -1170,8 +1216,10 @@ void createOrder()
       char dName[50] = "";
       temp = inventoryHead;
       int found = 0;
-      while(temp != NULL) {
-         if (temp->drugID == dID) {
+      while (temp != NULL)
+      {
+         if (temp->drugID == dID)
+         {
             strcpy(dName, temp->name);
             found = 1;
             break;
@@ -1179,16 +1227,19 @@ void createOrder()
          temp = temp->next;
       }
 
-      if (!found) {
+      if (!found)
+      {
          printf("Invalid Drug ID! Order for this ID cancelled.\n");
-         getchar(); 
-      } else {
+         getchar();
+      }
+      else
+      {
          printf("Enter Quantity: ");
          scanf("%d", &qty);
          getchar(); // Consume trailing newline
 
          pharmacyTop++;
-         pharmacyStack[pharmacyTop].patientID = pID; // Assigned patient ID
+         pharmacyStack[pharmacyTop].patientID = pID;         // Assigned patient ID
          strcpy(pharmacyStack[pharmacyTop].drugName, dName); // Still storing Name in order struct
          pharmacyStack[pharmacyTop].quantity = qty;
          pharmacyStack[pharmacyTop].totalPrice = 0.0;
@@ -1230,7 +1281,7 @@ void calculatePrice()
    float grandTotal = 0.0;
    printf("\n--- Calculated Prices ---\n");
 
-   for (int i = 0; i <= pharmacyTop; i++) 
+   for (int i = 0; i <= pharmacyTop; i++)
    {
       struct PharmacyOrder *order = &pharmacyStack[i];
       struct Drug *temp = inventoryHead;
@@ -1300,7 +1351,7 @@ void updateInventoryAfterSale()
             }
             else
             {
-               printf("Warning: Insufficient stock for %s! Have %d, order requires %d.\n", 
+               printf("Warning: Insufficient stock for %s! Have %d, order requires %d.\n",
                       temp->name, temp->quantity, order->quantity);
             }
             found = 1;
@@ -1380,10 +1431,10 @@ void cancelLastOrder()
 
    // Optional: Provide a feature to add stock back to inventory if this order already deducted it.
    // But since it's just canceling from the stack:
-   
-   printf("Cancelled the last order for Patient %d (Drug: %s, Qty: %d).\n", 
+
+   printf("Cancelled the last order for Patient %d (Drug: %s, Qty: %d).\n",
           lastOrder->patientID, lastOrder->drugName, lastOrder->quantity);
-          
+
    // Reduce the top counter to remove the order
    pharmacyTop--;
 }
@@ -1767,9 +1818,10 @@ int main()
                break;
             case 3:
                int nextPatient = peekNextPatient(&clinicQueue);
-               if(nextPatient != -1){
-                    printf("Next patient ID: %d\n", nextPatient);
-                }
+               if (nextPatient != -1)
+               {
+                  printf("Next patient ID: %d\n", nextPatient);
+               }
                break;
             case 4:
                displayQueue(&clinicQueue);
@@ -1780,7 +1832,8 @@ int main()
                break;
             case 0:
                printf("Returning to Main Menu...\n");
-                break;;
+               break;
+               ;
             default:
                printf("Invalid option\n");
             }
@@ -1803,11 +1856,13 @@ int main()
             switch (choice)
             {
             case 1:
-               //int empty = isEmergencyEmpty(&EMERGENCY_QUEUE);
-               if(isEmergencyEmpty(&EMERGENCY_QUEUE)){
+               // int empty = isEmergencyEmpty(&EMERGENCY_QUEUE);
+               if (isEmergencyEmpty(&EMERGENCY_QUEUE))
+               {
                   printf("Emergency queue is empty\n");
                }
-               else{
+               else
+               {
                   printf("There are patients who need immediate attention!\n");
                }
                break;
@@ -1854,7 +1909,8 @@ int main()
                break;
             case 0:
                printf("Returning to Main Menu...\n");
-                break;;
+               break;
+               ;
             default:
                printf("Invalid option\n");
             }
@@ -1894,7 +1950,8 @@ int main()
                break;
             case 0:
                printf("Returning to Main Menu...\n");
-                break;;
+               break;
+               ;
             default:
                printf("Invalid option\n");
             }
@@ -1933,7 +1990,8 @@ int main()
                break;
             case 0:
                printf("Returning to Main Menu...\n");
-                break;;
+               break;
+               ;
             default:
                printf("Invalid option\n");
             }
@@ -1972,7 +2030,8 @@ int main()
                break;
             case 0:
                printf("Returning to Main Menu...\n");
-                break;;
+               break;
+               ;
             default:
                printf("Invalid option\n");
             }
@@ -2012,7 +2071,8 @@ int main()
                break;
             case 0:
                printf("Returning to Main Menu...\n");
-                break;;
+               break;
+               ;
             default:
                printf("Invalid option.\n");
             }
