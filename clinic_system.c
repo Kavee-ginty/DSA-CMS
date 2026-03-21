@@ -2072,7 +2072,6 @@ int main()
             case 0:
                printf("Returning to Main Menu...\n");
                break;
-               ;
             default:
                printf("Invalid option.\n");
             }
