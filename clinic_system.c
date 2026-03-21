@@ -778,12 +778,12 @@ void addTreatment()
 {
    struct Treatment* newNode = (struct Treatment*) malloc(sizeof(struct Treatment));
 
-   printf("\nEnter Patient Id for treatment: ");
-   scanf("%d", &newNode->patientID);
+   printf("\nEnter Treatment Id: ");
+   scanf("%d", &newNode->treatmentID);
    while(getchar() != '\n');
 
-   printf("Enter Treatment Id: ");
-   scanf("%d", &newNode->treatmentID);
+   printf("Enter Patient Id for treatment: ");
+   scanf("%d", &newNode->patientID);
    while(getchar() != '\n');
 
    printf("Enter Treatment name: ");
@@ -831,6 +831,55 @@ treatmentHead
 
 void deleteTreatment()
 {
+   int id;
+   printf("Enter Treatment Id to delete: ");
+   scanf("%d", &id);
+   
+   if (id <= 0) {
+      printf("Invalid Treatment ID! it must be positive number\n");
+      return;
+   }
+   
+   struct Treatment* temp = treatmentHead;
+
+   
+
+   if (temp == NULL) {
+      printf("No treatment records found!\n");
+      return;
+   }
+   else{
+      if(id == 1){
+         if (treatmentHead == treatmentTail) {
+            treatmentHead = NULL;
+            treatmentTail = NULL;
+         }
+         else{
+            treatmentHead = treatmentHead->next;
+         }
+         free(temp);
+      }
+      else{
+         for(int i = 1; i < (id - 1); i++){
+            if (temp->next == NULL) {
+               printf("Treatment with ID %d not found!\n", id);
+               return;
+            }
+            temp = temp->next;
+         }
+         if(temp->next == treatmentTail){
+            treatmentTail = temp;
+            free(temp->next);
+         }
+         else{
+            struct Treatment* todelete = temp->next;
+            temp->next = todelete->next;
+            free(todelete);
+         }
+      }
+      printf("Treatment with Id %d deleted successfully!\n", id);
+   }
+   
 }
 
 /*
@@ -858,8 +907,8 @@ void displayTreatments()
    }
 
    while(temp != NULL) {
-      printf("Patient ID: %d \nTreatment ID: %d \nDescription: %s \nCost: %.2f\n", 
-         temp->patientID, temp->treatmentID, temp->treatmentName, temp->cost);
+      printf("Patient ID: %d | Treatment ID: %d | Description: %s | Cost: %.2f\n", 
+             temp->patientID, temp->treatmentID, temp->treatmentName, temp->cost);
       temp = temp->next;
    }
 
