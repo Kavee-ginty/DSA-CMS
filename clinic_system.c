@@ -580,7 +580,7 @@ struct emergencyNode *createEmergencyNode(int patientID, int emergencyScore)
 }
 
 /*
-Function: isEmergencyEmpty()
+Function: isEmergencyEmpty(POIINTER TO EmergencyQueue)
 
 Purpose:
 Check whether the emergency priority queue is empty.
@@ -607,7 +607,7 @@ int isEmergencyEmpty(struct emergencyQueue *queue)
 }
 
 /*
-Function: enqueueEmergency()
+Function: enqueueEmergency(POINTER TO EmergencyQueue, patientID, emergencyScore)
 
 Purpose:
 Add a patient to the emergency priority queue.
@@ -690,7 +690,7 @@ void enqueueEmergency(struct emergencyQueue *queue, int patientID, int emergency
 }
 
 /*
-Function: dequeueEmergency()
+Function: dequeueEmergency(POINTER TO EmergencyQueue)
 
 Purpose:
 Remove and return the highest priority emergency patient.
@@ -738,7 +738,7 @@ void dequeueEmergency(struct emergencyQueue *queue)
 }
 
 /*
-Function: peekEmergency()
+Function: peekEmergency(POINTER TO EmergencyQueue)
 
 Purpose:
 View the highest priority emergency patient.
@@ -768,7 +768,7 @@ void peekEmergency(struct emergencyQueue *queue)
 }
 
 /*
-Function: displayEmergencyQueue()
+Function: displayEmergencyQueue(POINTER TO EmergencyQueue)
 
 Purpose:
 Display all patients in the emergency priority queue.
