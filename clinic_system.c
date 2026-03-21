@@ -699,6 +699,9 @@ void dequeueEmergency(struct emergencyQueue *queue)
    }
    else{
       queue->front = temp->next;
+      if (queue->front != NULL) {
+         queue->front->prev = NULL;
+      }
    }
    printf("Emeregency Patient ID: %d\n", temp->patientID);
    printf("Emergency condition: %d\n", temp->emergencyScore);
