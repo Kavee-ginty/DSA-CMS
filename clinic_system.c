@@ -850,22 +850,61 @@
    void addTreatment()
    {
       struct Treatment* newNode = (struct Treatment*) malloc(sizeof(struct Treatment));
+      int tr_id = 1;
 
-      printf("Enter Patient Id for treatment: ");
+      printf("\nEnter Patient ID: ");
       scanf("%d", &newNode->patientID);
       while(getchar() != '\n');
 
-      printf("\nEnter Treatment Id: ");
-      scanf("%d", &newNode->treatmentID);
-      while(getchar() != '\n');
+      struct Dummytreatments{
+         int code;
+         char name[50];
+         float cost;
+      };
 
-      printf("\nEnter Treatment name: ");
-      fgets(newNode->treatmentName, sizeof(newNode->treatmentName), stdin);
-      // Remove the newline character from the end of the string
-      newNode->treatmentName[strcspn(newNode->treatmentName, "\n")] = '\0';
+      struct Dummytreatments treatment_set[20] = {
+      {1, "General Consultation", 50.00},
+      {2, "Blood Pressure Check", 15.00},
+      {3, "Blood Sugar Test", 20.00},
+      {4, "Flu Vaccination", 35.00},
+      {5, "Stomach Ache Medication", 12.50},
+      {6, "Stitch Minor Wound", 120.00},
+      {7, "Allergy Skin Test", 85.00},
+      {8, "X-Ray Chest", 150.00},
+      {9, "Dental Cleaning", 95.00},
+      {10, "Physical Therapy Session", 110.00},
+      {11, "Ear Wax Removal", 40.00},
+      {12, "Eye Vision Test", 30.00},
+      {13, "Cholesterol Screening", 55.00},
+      {14, "Vitamin B12 Injection", 25.00},
+      {15, "Nebulizer Treatment", 45.00},
+      {16, "ECG / Heart Rhythm Map", 200.00},
+      {17, "Oxygen Therapy (1hr)", 75.00},
+      {18, "Antibiotic IV Drip", 180.00},
+      {19, "Urine Analysis", 22.00},
+      {20, "Burn Dressing Change", 65.00},
+      {0, "", 0.00}
+      };
 
-      printf("\nEnter cost for all treatments: ");
-      scanf("%f", &newNode->cost);
+      if (newNode->patientID <= 0) {
+         printf("\nInvalid Patient ID!\n");
+         free(newNode);
+      }
+      else{
+         int count = 1;
+
+         printf("\n----------------------------------------------------------\n");
+         printf("%-4s %-50s %-10s\n", "Code","Treatment Name", "cost (Rs)");
+         printf("----------------------------------------------------------\n");
+         while(treatment_set[count].code != 0) {
+            printf("%-4d %-50s %-10.2f\n", treatment_set[count].code, treatment_set[count].name, treatment_set[count].cost);
+            count++;
+         }
+         printf("--------------------------- END ----------------------------\n");
+
+         int tr_code;
+         while () // continue from here
+      }
 
       newNode->next = NULL;
       while(getchar() != '\n');
@@ -879,6 +918,7 @@
             temp = temp->next;
          }
          temp->next = newNode;
+         treatmentTail = newNode;
       }
 
       printf("Treatment added successfully!\n");
@@ -904,6 +944,54 @@
 
    void deleteTreatment()
    {
+      int id;
+      printf("\nEnter Treatment Id to delete: ");
+      scanf("%d", &id);
+   
+      if (id <= 0) {
+         printf("\nInvalid Treatment ID! it must be positive number\n");
+         return;
+      }
+   
+      struct Treatment* temp = treatmentHead; 
+
+      while(temp != NULL) {
+         if (temp->treatmentID == id) {
+            if (temp == treatmentHead) {
+               if (temp == treatmentTail) {
+                  treatmentHead = treatmentTail = NULL;
+                  free(temp);
+               }
+               else {
+                  struct Treatment* nodeToDelete = temp;
+                  treatmentHead = temp->next;
+                  free(nodeToDelete);
+               }
+            }
+            else {
+               struct Treatment* todelete = treatmentHead;
+               if (temp == treatmentTail) {
+                  while(todelete->next != temp) {
+                     todelete = todelete->next;
+                  }
+                  todelete->next = NULL;
+                  treatmentTail = todelete;
+                  free(temp);
+               }
+               else{
+                  for (; todelete->next != temp; todelete = todelete->next);
+                  todelete->next = temp->next;
+                  free(temp);
+               }
+            }
+            printf("Treatment with ID %d deleted successfully.\n", id);
+            return;
+         }
+         else{
+            temp = temp->next;
+         }
+      }
+      printf("Treatment with ID %d not found.\n", id);
    }
 
    /*
@@ -924,20 +1012,35 @@
    void displayTreatments()
    {
       struct Treatment* temp = treatmentHead;
+      int count = 0;
 
       if (temp == NULL) {
          printf("No Treatment found!\n");
          return;
       }
+      else{
+         printf("=============================================================================\n");
+         printf("%25s Treatment Records\n", " ");
+         printf("=============================================================================\n");
+         printf("%-12s %-10s %-40s %-10s\n", "Treatment ID", "Patient ID", "Treatment Name", "Cost (Rs)");
+         printf("-----------------------------------------------------------------------------\n");
 
-      while(temp != NULL) {
-         printf("Patient ID: %d \nTreatment ID: %d \nDescription: %s \nCost: %.2f\n", 
-            temp->patientID, temp->treatmentID, temp->treatmentName, temp->cost);
-         temp = temp->next;
+         while(temp != NULL) {
+            int tr_id = temp->treatmentID;
+            int p_id = temp->patientID;
+            char tr_name[1000];
+            strcpy(tr_name, temp->treatmentName);
+            float cost = temp->cost;
+
+            printf("%-12d %-10d %-40s %-10.2f\n", tr_id, p_id, tr_name, cost);
+
+            temp = temp->next;
+            count++;
+         }
+         printf("------------------------------------------------------------------------------\n");
+         printf("%-3s %25s %3d", "End Of the Records", "Total Records: ", count);
+         printf("=============================================================================\n");
       }
-
-      printf("End of treatment records.\n");
-
    }
 
    /*
@@ -957,6 +1060,31 @@
 
    void searchTreatment()
    {
+      int id;
+      bool found = false;
+      printf("\nEnter Treatment Id to search: ");
+      scanf("%d", &id);
+
+      struct Treatment* temp = treatmentHead;
+
+      while(temp != NULL) {
+         if(id == temp->treatmentID) {
+            printf("-----------------------------------------------------------------\n");
+            printf("|  Treatment Record Found!%2s                                    |\n");
+            printf("|----------------------------------------------------------------|\n");
+            printf("|  Patient ID: %-20d | Treatment ID: %-20d |\n", temp->patientID, temp->treatmentID);
+            printf("|  Cost: Rs. %-30.2f |\n", temp->cost);
+            printf("|  Treatment Name: %-30s |\n", temp->treatmentName);
+            printf("-----------------------------------------------------------------\n");
+
+            found = true;
+            break;
+         }
+         temp = temp->next;
+      }
+      if (found == false) {
+         printf("Treatment with Id %d not found!\n", id);
+      }
    }
 
    /*
