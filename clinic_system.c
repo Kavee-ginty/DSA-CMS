@@ -1695,7 +1695,7 @@
 
    void updatePaymentStatus()
    {int billId;
-    char newStatus[20];
+    char newStatus[15];
 
     printf("Enter bill ID to update: ");
     scanf("%d", &billId);
