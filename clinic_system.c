@@ -57,7 +57,8 @@
          {17, "Quinn", 33, "M", "0711111127"},
          {18, "Rita", 28, "F", "0711111128"},
          {19, "Sam", 41, "M", "0711111129"},
-         {20, "Tina", 23, "F", "0711111130"}};
+         {20, "Tina", 23, "F", "0711111130"}
+      };
 
    int patientCount = 20;
 
@@ -893,7 +894,7 @@
       scanf("%d", &newNode->patientID);
       while(getchar() != '\n');
       
-      if (newNode->patientID <= 0) {
+      if (newNode->patientID <= 0 || newNode->patientID > patientCount) {
          printf("\nInvalid Patient ID!\n");
          free(newNode);
          return -1;
@@ -1045,7 +1046,7 @@
       int count = 0;
 
       if (temp == NULL) {
-         printf("No Treatment found!\n");
+         printf("\n***   No Treatment found!   ***\n");
          return;
       }
       else{
@@ -1065,7 +1066,7 @@
                for (int j = 0; j < 20; j++) {
                   if (treatment_set[j].code == temp->treatment_code[i]) {
                      if (item_code) {
-                        printf("%-15d %-14d %-38s %-12.2f\n", 
+                        printf("%-15d %-14d %-38s %-10.2f\n", 
                                temp->treatmentID, 
                                temp->patientID, 
                                treatment_set[j].name, 
@@ -1115,13 +1116,30 @@
 
       while(temp != NULL) {
          if(id == temp->treatmentID) {
-            printf("-----------------------------------------------------------------\n");
-            printf("|  Treatment Record Found!%2s                                    |\n");
+            printf("\n ----------------------------------------------------------------\n");
+            printf("|  Treatment Record Found!                                       |\n");
             printf("|----------------------------------------------------------------|\n");
-            printf("|  Patient ID: %-20d | Treatment ID: %-20d |\n", temp->patientID, temp->treatmentID);
-            printf("|  Cost: Rs. %-30.2f |\n", temp->cost);
-            printf("|  Treatment Name: %-30s |\n", temp->treatment_code[0] == 0 ? "No treatments" : "");
-            printf("-----------------------------------------------------------------\n");
+            printf("|  Patient ID: %-20d | Treatment ID: %-12d |\n", temp->patientID, temp->treatmentID);
+            int item_code = 1;
+            for (int i = 0; i < 10 ; i++) {
+               if (temp->treatment_code[i] <= 0 || temp->treatment_code[i] >20) {
+                  break;
+               }
+               for (int j = 0; j < 20; j++) {
+                  if (treatment_set[j].code == temp->treatment_code[i]) {
+                     if (item_code) {
+                        printf("|  Treatment Name:  %-44s |\n", treatment_set[j].name);
+                        item_code = 0;
+                     }
+                     else {
+                        printf("|  %-16s %-44s |\n", " ", treatment_set[j].name);
+                     }
+                     break;
+                  }
+               }
+            }
+            printf("|  Cost:   Rs. %-49.2f |\n", temp->cost);
+            printf(" ---------------------------------------------------------------- \n");
 
             found = true;
             break;
@@ -1129,7 +1147,7 @@
          temp = temp->next;
       }
       if (found == false) {
-         printf("Treatment with Id %d not found!\n", id);
+         printf("\n***   Treatment with Id %d not found!   ***\n", id);
       }
    }
 
