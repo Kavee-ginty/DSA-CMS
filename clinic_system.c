@@ -203,6 +203,7 @@
 
    struct Bill bills[100];
    int billCount = 0;
+   int nextBillID = 1;
 
    /* ==================================================
       PATIENT FUNCTIONS - Ginodh
@@ -1828,7 +1829,25 @@
    */
 
    void generateBill()
-   {
+   {if (billCount >= 100) {
+        printf("Bill storage is full.\n");
+        return;
+    }
+      int patientId;
+      float amount;
+      printf("Enter patient ID: ");
+      scanf("%d", &patientId);
+      printf("Enter bill amount: ");
+      scanf("%f", &amount); 
+
+    bills[billCount].billID = nextBillID; // Assign the next available bill ID
+    bills[billCount].patientID = patientId;    
+    bills[billCount].amount = amount;
+    strcpy(bills[billCount].paymentStatus, "Unpaid");
+
+    billCount++;
+    nextBillID++; // Increment the global bill ID for the next bill
+    printf("Bill generated successfully.\n");
    }
 
    /*
@@ -1848,7 +1867,28 @@
    */
 
    void updatePaymentStatus()
-   {
+   {int billId;
+    char newStatus[15];
+
+    printf("Enter bill ID to update: ");
+    scanf("%d", &billId);
+
+    printf("Enter new payment status: ");
+    scanf("%s", newStatus);
+
+    int found = 0;
+    for (int i = 0; i < billCount; i++) {
+        if (bills[i].billID == billId) {
+            strcpy(bills[i].paymentStatus, newStatus);
+            printf("Payment status updated successfully.\n");
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Bill not found.\n");
+    }
    }
 
    /*
@@ -1868,6 +1908,27 @@
 
    void searchBill()
    {
+       int found = 0;
+       int billId;
+
+       printf("Enter bill ID to search: ");
+       scanf("%d", &billId);
+
+    for (int i = 0; i < billCount; i++) {
+        if (bills[i].billID == billId) {
+            printf("\n===== Bill Found =====\n");
+            printf("Bill ID        : %d\n", bills[i].billID);
+            printf("Patient ID     : %d\n", bills[i].patientID);            
+            printf("Amount         : %.2f\n", bills[i].amount);
+            printf("Payment Status : %s\n", bills[i].paymentStatus);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Bill with ID %d not found.\n", billId);
+    }
    }
 
    /*
@@ -1886,6 +1947,20 @@
 
    void displayBills()
    {
+      if (billCount == 0) {
+        printf("No billing records available.\n");
+        return;
+    }
+
+    printf("\n========== BILLING RECORDS ==========\n");
+
+    for (int i = 0; i < billCount; i++) {
+        printf("\nBill %d\n", i + 1);
+        printf("Bill ID        : %d\n", bills[i].billID);
+        printf("Patient ID     : %d\n", bills[i].patientID);        
+        printf("Amount         : %.2f\n", bills[i].amount);
+        printf("Payment Status : %s\n", bills[i].paymentStatus);
+    }
    }
 
    /*
@@ -1905,6 +1980,19 @@
 
    void sortBillsByAmount()
    {
+      struct Bill temp;
+
+    for (int i = 0; i < billCount - 1; i++) {
+        for (int j = 0; j < billCount - i - 1; j++) {
+            if (bills[j].amount > bills[j + 1].amount) {
+                temp = bills[j];
+                bills[j] = bills[j + 1];
+                bills[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("Bills sorted by amount successfully.\n");
    }
 
    int main()
@@ -2418,6 +2506,7 @@
                switch (choice)
                {
                case 1:
+                                
                   generateBill();
                   break;
                case 2:
