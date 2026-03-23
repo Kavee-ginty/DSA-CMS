@@ -111,7 +111,7 @@
    {
       int treatmentID;
       int patientID;
-      char treatmentName[1000];
+      int treatment_code[10];
       float cost;
       struct Treatment *next;
    };
@@ -847,82 +847,111 @@
    Important Variables:
    treatmentHead → start of treatment list
    */
+   struct Dummytreatments{
+         int code;
+         char name[50];
+         float cost;
+   };
 
-   void addTreatment()
+   struct Dummytreatments treatment_set[20] = {
+      {1, "General Consultation", 2000.00},
+      {2, "Blood Pressure Check", 250.00},
+      {3, "Blood Sugar Test", 200.00},
+      {4, "Flu Vaccination", 1000.00},
+      {5, "Stomach Ache Medication", 955.50},
+      {6, "Stitch Minor Wound", 1200.00},
+      {7, "Allergy Skin Test", 1850.00},
+      {8, "X-Ray Chest", 4000.00},
+      {9, "Dental Cleaning", 3000.00},
+      {10, "Physical Therapy Session", 1100.00},
+      {11, "Ear Wax Removal", 1450.00},
+      {12, "Eye Vision Test", 1350.00},
+      {13, "Cholesterol Screening", 750.00},
+      {14, "Vitamin B12 Injection", 2050.00},
+      {15, "Nebulizer Treatment", 450.00},
+      {16, "ECG / Heart Rhythm Map", 2700.00},
+      {17, "Oxygen Therapy (1hr)", 7050.00},
+      {18, "Antibiotic IV Drip", 1800.00},
+      {19, "Urine Analysis", 2200.00},
+      {20, "Burn Dressing Change", 650.00},
+   };
+
+   int tr_id = 1;
+
+   float addTreatment()
    {
       struct Treatment* newNode = (struct Treatment*) malloc(sizeof(struct Treatment));
-      int tr_id = 1;
+      newNode->next = NULL;
+
+      if (newNode == NULL) {
+         printf("\nMemory allocation failed for new record\n");
+         return -1;
+      }
+      float total_bill = 0.0;
 
       printf("\nEnter Patient ID: ");
       scanf("%d", &newNode->patientID);
       while(getchar() != '\n');
-
-      struct Dummytreatments{
-         int code;
-         char name[50];
-         float cost;
-      };
-
-      struct Dummytreatments treatment_set[20] = {
-      {1, "General Consultation", 50.00},
-      {2, "Blood Pressure Check", 15.00},
-      {3, "Blood Sugar Test", 20.00},
-      {4, "Flu Vaccination", 35.00},
-      {5, "Stomach Ache Medication", 12.50},
-      {6, "Stitch Minor Wound", 120.00},
-      {7, "Allergy Skin Test", 85.00},
-      {8, "X-Ray Chest", 150.00},
-      {9, "Dental Cleaning", 95.00},
-      {10, "Physical Therapy Session", 110.00},
-      {11, "Ear Wax Removal", 40.00},
-      {12, "Eye Vision Test", 30.00},
-      {13, "Cholesterol Screening", 55.00},
-      {14, "Vitamin B12 Injection", 25.00},
-      {15, "Nebulizer Treatment", 45.00},
-      {16, "ECG / Heart Rhythm Map", 200.00},
-      {17, "Oxygen Therapy (1hr)", 75.00},
-      {18, "Antibiotic IV Drip", 180.00},
-      {19, "Urine Analysis", 22.00},
-      {20, "Burn Dressing Change", 65.00},
-      {0, "", 0.00}
-      };
-
+      
       if (newNode->patientID <= 0) {
          printf("\nInvalid Patient ID!\n");
          free(newNode);
+         return -1;
       }
       else{
-         int count = 1;
-
-         printf("\n----------------------------------------------------------\n");
-         printf("%-4s %-50s %-10s\n", "Code","Treatment Name", "cost (Rs)");
-         printf("----------------------------------------------------------\n");
-         while(treatment_set[count].code != 0) {
-            printf("%-4d %-50s %-10.2f\n", treatment_set[count].code, treatment_set[count].name, treatment_set[count].cost);
-            count++;
+         printf("\n-------------------------------------------------------------------\n");
+         printf("%-6s %-50s %-10s\n", "Code","Treatment Name", "Cost (Rs)");
+         printf("-------------------------------------------------------------------\n");
+         for(int i = 0; i < 20; i++) {
+            printf("%-6d %-50s %-10.2f\n", 
+               treatment_set[i].code, 
+               treatment_set[i].name, 
+               treatment_set[i].cost);
          }
-         printf("--------------------------- END ----------------------------\n");
+         printf("------------------------------- END -------------------------------\n");
+         printf("\n*** Important: Enter -1 To exit ***\n");
 
          int tr_code;
-         while () // continue from here
-      }
+         int tr_count = 0;
 
-      newNode->next = NULL;
-      while(getchar() != '\n');
+         while (1) {
+            printf("\nEnter Treatment Code: ");
+            scanf("%d", &tr_code);
 
-      if(treatmentHead == NULL) {
-         treatmentHead = treatmentTail = newNode;
-      }
-      else {
-         struct Treatment* temp = treatmentHead;
-         while(temp->next != NULL) {
-            temp = temp->next;
+            if(tr_code == -1) {
+               break;
+            }
+            
+            if (tr_code <= 0 || tr_code > 20) {
+               printf("\nInvalid Treatment code! Please eneter a code between 1 to 20\n");
+               continue;
+            }
+
+            if (tr_count < 10){
+               total_bill += treatment_set[tr_code - 1].cost;
+               newNode->treatment_code[tr_count] = tr_code;
+               tr_count++;
+               printf("Added: %s\n", treatment_set[tr_code - 1].name);
+            }
+            else{
+               printf("\nTreatment limit reached! Cannot add more treatments.\n");
+               break;
+            }
          }
-         temp->next = newNode;
-         treatmentTail = newNode;
-      }
 
-      printf("Treatment added successfully!\n");
+         newNode->cost = total_bill;
+         newNode->treatmentID = tr_id++;
+
+         if (treatmentHead == NULL) {
+            treatmentHead = treatmentTail = newNode;
+         }
+         else {
+            treatmentTail->next = newNode;
+            treatmentTail = newNode;
+         }
+         printf("\nAll Treatments added Successfully for patient ID %d!\n", newNode->patientID);
+      }
+      return total_bill;
    }
 
    /*
@@ -1020,26 +1049,42 @@
          return;
       }
       else{
+         printf("\n=============================================================================\n");
+         printf("%-30s Treatment Records\n", " ");
          printf("=============================================================================\n");
-         printf("%25s Treatment Records\n", " ");
-         printf("=============================================================================\n");
-         printf("%-12s %-10s %-40s %-10s\n", "Treatment ID", "Patient ID", "Treatment Name", "Cost (Rs)");
+         printf("%-15s %-14s %-36s %-10s\n", "Treatment_ID", "Patient_ID", "Treatment Name", "Cost (Rs)");
          printf("-----------------------------------------------------------------------------\n");
 
          while(temp != NULL) {
-            int tr_id = temp->treatmentID;
-            int p_id = temp->patientID;
-            char tr_name[1000];
-            strcpy(tr_name, temp->treatmentName);
-            float cost = temp->cost;
-
-            printf("%-12d %-10d %-40s %-10.2f\n", tr_id, p_id, tr_name, cost);
+            int item_code = 1;
+            
+            for (int i = 0; i < 10 ; i++) {
+               if (temp->treatment_code[i] <= 0 || temp->treatment_code[i] >20) {
+                  break;
+               }
+               for (int j = 0; j < 20; j++) {
+                  if (treatment_set[j].code == temp->treatment_code[i]) {
+                     if (item_code) {
+                        printf("%-15d %-14d %-38s %-12.2f\n", 
+                               temp->treatmentID, 
+                               temp->patientID, 
+                               treatment_set[j].name, 
+                               temp->cost);
+                        item_code = 0;
+                     }
+                     else {
+                        printf("%-15s %-14s %-38s %-12s\n", " ", " ", treatment_set[j].name, " ");
+                     }
+                     break;
+                  }
+               }
+            }
 
             temp = temp->next;
             count++;
          }
-         printf("------------------------------------------------------------------------------\n");
-         printf("%-3s %25s %3d", "End Of the Records", "Total Records: ", count);
+         printf("-----------------------------------------------------------------------------\n");
+         printf(" End Of the Records   %-33s  Total Records: %3d\n", " ", count);
          printf("=============================================================================\n");
       }
    }
@@ -1075,7 +1120,7 @@
             printf("|----------------------------------------------------------------|\n");
             printf("|  Patient ID: %-20d | Treatment ID: %-20d |\n", temp->patientID, temp->treatmentID);
             printf("|  Cost: Rs. %-30.2f |\n", temp->cost);
-            printf("|  Treatment Name: %-30s |\n", temp->treatmentName);
+            printf("|  Treatment Name: %-30s |\n", temp->treatment_code[0] == 0 ? "No treatments" : "");
             printf("-----------------------------------------------------------------\n");
 
             found = true;
