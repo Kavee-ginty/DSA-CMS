@@ -2022,6 +2022,78 @@
     printf("Bills sorted by amount successfully.\n");
    }
 
+   /* ==================================================
+   MASTER WORKFLOW - Patient Journey
+   ================================================== */
+void masterWorkflow() {
+    int pID = -1;
+    char name[50], gender[10], contact[20];
+    int age, choice, urgency;
+    float treatmentCost = 0;
+
+    printf("\n--- STEP 1: PATIENT ENTRY & REGISTRATION ---\n");
+    printf("Is the patient already registered? (1 for Yes, 0 for No): ");
+    scanf("%d", &choice);
+
+    if (choice == 0) {
+        printf("Enter Name: "); getchar();
+        fgets(name, sizeof(name), stdin); name[strcspn(name, "\n")] = 0;
+        printf("Enter Age: "); scanf("%d", &age);
+        printf("Enter Gender (M/F): "); scanf("%s", gender);
+        printf("Enter Contact: "); scanf("%s", contact);
+        
+        // Registering patient
+        addPatient(name, age, gender, contact);
+        pID = patientCount; // Newest patient
+    } else {
+        printf("Enter Patient ID: ");
+        scanf("%d", &pID);
+        searchPatient(pID);
+    }
+
+    printf("\n--- STEP 2: QUEUE MANAGEMENT (TRIAGE) ---\n");
+    printf("Select Triage Category:\n1. Standard Consultation\n2. Emergency Case\nChoice: ");
+    scanf("%d", &choice);
+
+    if (choice == 2) {
+        printf("Enter Emergency Score (3-Critical, 2-Urgent, 1-Non-Urgent): ");
+        scanf("%d", &urgency);
+        enqueueEmergency(&EMERGENCY_QUEUE, pID, urgency);
+        printf("Patient %d added to Emergency Queue.\n", pID);
+    } else {
+        enqueuePatient(&clinicQueue, pID);
+    }
+
+    printf("\n--- STEP 3: CONSULTATION & TREATMENT ---\n");
+    printf("Processing consultation for the next available patient...\n");
+    
+    // Check emergency first, then standard
+    if (!isEmergencyEmpty(&EMERGENCY_QUEUE)) {
+        dequeueEmergency(&EMERGENCY_QUEUE);
+    } else {
+        dequeuePatient(&clinicQueue);
+    }
+
+    printf("Is treatment required? (1 for Yes, 0 for No): ");
+    scanf("%d", &choice);
+    if (choice == 1) {
+        treatmentCost = addTreatment(); // Records in Singly Linked List
+    }
+
+    printf("\n--- STEP 4: PHARMACY & INVENTORY ---\n");
+    printf("Does the patient need medication? (1 for Yes, 0 for No): ");
+    scanf("%d", &choice);
+    if (choice == 1) {
+        createOrder(); // Pushes to Stack
+        calculatePrice();
+        updateInventoryAfterSale();
+    }
+
+    printf("\n--- STEP 5: BILLING & DISCHARGE ---\n");
+    generateBill(); // Manual entry based on calculated costs above
+    printf("Patient Journey Completed. Returning to main menu.\n");
+}
+
    int main()
    {
       int patientID;
@@ -2044,6 +2116,7 @@
          printf("5. Pharmacy inventory management\n");
          printf("6. Medicine Purchase Tracking\n");
          printf("7. Billing and payment processing\n");
+         printf("8. START MASTER WORKFLOW (Full Patient Journey)\n");
          printf("0. Exit System\n");
          printf("Enter choice: ");
          scanf("%d", &workflow);
@@ -2427,6 +2500,9 @@
                if (choice == 0)
                   break;
             }
+            break;
+         case 8:
+            masterWorkflow();
             break;
          case 0:
             exitKey = 0;
