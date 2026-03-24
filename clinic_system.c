@@ -1656,7 +1656,7 @@
    inventoryHead
    */
 
-   void calculatePrice()
+   float calculatePrice()
    {
       if (pharmacyTop == -1)
       {
@@ -1694,6 +1694,7 @@
 
       printf("-------------------------\n");
       printf("GRAND TOTAL FOR ALL ORDERS: %.2f\n", grandTotal);
+      return grandTotal;
    }
 
    /*
@@ -1851,12 +1852,20 @@
         printf("Bill storage is full.\n");
         return;
     }
-      int patientId;
-      float amount;
+      int patientId;      
       printf("Enter patient ID: ");
       scanf("%d", &patientId);
-      printf("Enter bill amount: ");
-      scanf("%f", &amount); 
+       struct Treatment* temp = treatmentHead;
+    float amount = -1;
+
+    while (temp != NULL) {
+        if (temp->patientID == patientId) {
+            amount += temp->cost;
+            break;
+        }
+        temp = temp->next;
+    }
+    amount += calculatePrice(); // Add pharmacy order costs to the bill
 
     bills[billCount].billID = nextBillID; // Assign the next available bill ID
     bills[billCount].patientID = patientId;    
