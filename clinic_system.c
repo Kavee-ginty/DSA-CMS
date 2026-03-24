@@ -245,11 +245,8 @@
       {
          printf("Patient limit reached. Cannot add more patients.\n");
       }
-      for (int i = 0; i < patientCount; i++)
-      {
-         printf("Patient ID: %d, Name: %s, Age: %d, Gender: %s, Contact: %s\n",
-               patients[i].patientID, patients[i].name, patients[i].age, patients[i].gender, patients[i].contact);
-      }
+      printf("Patient ID: %d, Name: %s, Age: %d, Gender: %s, Contact: %s\n",
+               patients[patientCount - 1].patientID, patients[patientCount - 1].name, patients[patientCount - 1].age, patients[patientCount - 1].gender, patients[patientCount - 1].contact);
    }
 
    /*
@@ -1682,6 +1679,31 @@
             scanf("%d", &qty);
             getchar(); // Consume trailing newline
 
+            if (qty > 0)
+            {
+               // Optional: Check if requested quantity is available in inventory before creating order
+               temp = inventoryHead;
+               while (temp != NULL)
+               {
+                  if (strcmp(temp->name, dName) == 0)
+                  {
+                     if (temp->quantity < qty)
+                     {
+                        printf("Warning: Only %d units of %s available. Order quantity adjusted to available stock.\n",
+                              temp->quantity, temp->name);
+                        qty = temp->quantity; // Adjust order quantity to available stock
+                     }
+                     break;
+                  }
+                  temp = temp->next;
+               }
+            }
+            else
+            {
+               printf("Invalid quantity! Order cancelled.\n");
+               continue; // Skip adding this order and ask if they want to add another
+            }
+
             pharmacyTop++;
             pharmacyStack[pharmacyTop].patientID = pID;         // Assigned patient ID
             strcpy(pharmacyStack[pharmacyTop].drugName, dName); // Still storing Name in order struct
@@ -1719,7 +1741,7 @@
       if (pharmacyTop == -1)
       {
          printf("No orders to calculate price for.\n");
-         return;
+         return 0.0;
       }
 
       float grandTotal = 0.0;
@@ -1905,34 +1927,89 @@
    billCount
    */
 
-   void generateBill()
-   {if (billCount >= 100) {
-        printf("Bill storage is full.\n");
+   void generateBill() {
+    if (billCount >= 100) {
+        printf("Error: Bill storage limit reached.\n");
         return;
     }
+<<<<<<< HEAD
       int patientId;
       printf("Enter patient ID: ");
       scanf("%d", &patientId);
        struct Treatment* temp = treatmentHead;
     float amount = 0;
+=======
+>>>>>>> fb4bbeace49958d8f9b82d4fc6e35c22539ec86e
 
-    while (temp != NULL) {
-        if (temp->patientID == patientId) {
-            amount += temp->cost;
-            break;
-        }
-        temp = temp->next;
+    int patientId;
+    printf("Enter patient ID: ");
+    if (scanf("%d", &patientId) != 1) {
+        while(getchar() != '\n'); // Clear buffer
+        printf("Invalid input.\n");
+        return;
     }
-    amount += calculatePrice(); // Add pharmacy order costs to the bill
 
+<<<<<<< HEAD
     bills[billCount].billID = nextBillID; // Assign the next available bill ID
     bills[billCount].patientID = patientId;
     bills[billCount].amount = amount;
+=======
+    float totalTreatmentCost = 0.0;
+    float totalPharmacyCost = 0.0;
+
+    // 1. Calculate Treatment Costs from the Singly Linked List
+    struct Treatment* currentTr = treatmentHead;
+    while (currentTr != NULL) {
+        if (currentTr->patientID == patientId) {
+            totalTreatmentCost += currentTr->cost;
+        }
+        currentTr = currentTr->next;
+    }
+
+   // 2. Calculate Pharmacy Costs from the Stack by looking up Inventory prices
+    for (int i = 0; i <= pharmacyTop; i++) {
+        if (pharmacyStack[i].patientID == patientId) {
+            struct Drug *tempInv = inventoryHead;
+            int found = 0;
+
+            // Find the drug in inventory to get the current unit price
+            while (tempInv != NULL) {
+                if (strcmp(tempInv->name, pharmacyStack[i].drugName) == 0) {
+                    float itemTotal = tempInv->unitPrice * pharmacyStack[i].quantity;
+                    totalPharmacyCost += itemTotal;
+                    
+                    // Update the stack record so displayOrders() shows the correct price later
+                    pharmacyStack[i].totalPrice = itemTotal;
+                    found = 1;
+                    break;
+                }
+                tempInv = tempInv->next;
+            }
+
+            if (!found) {
+                printf("Warning: Drug '%s' in order not found in inventory!\n", pharmacyStack[i].drugName);
+            }
+        }
+    }
+
+    float grandTotal = totalTreatmentCost + totalPharmacyCost;
+
+    // 3. Store the Bill
+    bills[billCount].billID = nextBillID++;
+    bills[billCount].patientID = patientId;
+    bills[billCount].amount = grandTotal;
+>>>>>>> fb4bbeace49958d8f9b82d4fc6e35c22539ec86e
     strcpy(bills[billCount].paymentStatus, "Unpaid");
 
+    // 4. Detailed Output for the user
+    printf("\n--- Bill Summary for Patient %d ---\n", patientId);
+    printf("Total Treatment Cost:  %.2f\n", totalTreatmentCost);
+    printf("Total Pharmacy Cost:   %.2f\n", totalPharmacyCost);
+    printf("----------------------------------\n");
+    printf("GRAND TOTAL:           %.2f\n", grandTotal);
+    printf("Bill ID %d generated successfully.\n", bills[billCount].billID);
+
     billCount++;
-    nextBillID++; // Increment the global bill ID for the next bill
-    printf("Bill generated successfully.\n");
    }
 
    /*
