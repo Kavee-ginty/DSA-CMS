@@ -1163,8 +1163,80 @@
    treatmentHead
    */
 
-   void sortTreatmentsByCost()
-   {
+   struct SortHelper {
+      int id;
+      float cost;
+   };
+
+   void sortTreatmentsByCost() {
+      struct Treatment* temp = treatmentHead;
+      int nodeCount = 0;
+
+    
+      while (temp != NULL) {
+         nodeCount++;
+         temp = temp->next;
+      }
+
+      if (nodeCount == 0) {
+         printf("No records to sort!\n");
+         return;
+      }
+
+      struct SortHelper* sortArray = (struct SortHelper*)malloc(nodeCount * sizeof(struct SortHelper));
+      temp = treatmentHead;
+      for (int i = 0; i < nodeCount; i++) {
+         sortArray[i].id = temp->treatmentID;
+         sortArray[i].cost = temp->cost;
+         temp = temp->next;
+      }
+
+      for (int i = 1; i < nodeCount; i++) {
+         struct SortHelper key = sortArray[i];
+         int j = i - 1;
+
+         while (j >= 0 && sortArray[j].cost > key.cost) {
+            sortArray[j + 1] = sortArray[j];
+            j = j - 1;
+         }
+         sortArray[j + 1] = key;
+      }
+
+      printf("\n=============================================================================\n");
+      printf("%-30s Sorted Treatment Records (By Cost)\n", " ");
+      printf("=============================================================================\n");
+      printf("%-15s %-14s %-36s %-10s\n", "Treatment_ID", "Patient_ID", "Treatment Name", "Cost (Rs)");
+      printf("-----------------------------------------------------------------------------\n");
+
+      for (int i = 0; i < nodeCount; i++) {
+         struct Treatment* search = treatmentHead;
+         while (search != NULL) {
+            if (search->treatmentID == sortArray[i].id) {
+               int item_code = 1;
+               for (int k = 0; k < 10; k++) {
+                  if (search->treatment_code[k] <= 0 || search->treatment_code[k] > 20) break;             
+                     for (int j = 0; j < 20; j++) {
+                        if (treatment_set[j].code == search->treatment_code[k]) {
+                           if (item_code) {
+                              printf("%-15d %-14d %-38s %-12.2f\n", 
+                                 search->treatmentID, search->patientID, treatment_set[j].name, search->cost);
+                                 item_code = 0;
+                           } else {
+                              printf("%-15s %-14s %-38s %-12s\n", "", "", treatment_set[j].name, "");
+                           }
+                           break;
+                        }
+                     }
+                  }
+                  printf("-----------------------------------------------------------------------------\n");
+                  break;
+               }
+            search = search->next;
+         }
+      }
+
+      free(sortArray);
+
    }
 
    /* ==================================================
