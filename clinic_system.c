@@ -1856,7 +1856,7 @@
       printf("Enter patient ID: ");
       scanf("%d", &patientId);
        struct Treatment* temp = treatmentHead;
-    float amount = -1;
+    float amount = 0;
 
     while (temp != NULL) {
         if (temp->patientID == patientId) {
