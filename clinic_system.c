@@ -34,7 +34,6 @@
       char contact[20];
    };
 
-   /* 20 existing patients + space for 20 more */
 
    struct Patient patients[40] =
       {
@@ -136,13 +135,11 @@
    };
 
 
-   /* Head and tail pointers for inventory list */
 
    struct Drug *inventoryHead = NULL;
    struct Drug *inventoryTail = NULL;
 
    void initializeDummyDrugs() {
-      // Array of dummy data
       struct Drug dummyDrugs[10] = {
          {1, "PARACETAMOL", 100, 2.50, NULL, NULL},
          {2, "AMOXICILLIN", 50, 5.00, NULL, NULL},
@@ -156,7 +153,6 @@
          {10, "DICLOFENAC", 110, 3.50, NULL, NULL}
       };
 
-      // Insert them into linked list
       for(int i = 0; i < 10; i++) {
          struct Drug* newDrug = (struct Drug*)malloc(sizeof(struct Drug));
          *newDrug = dummyDrugs[i];
@@ -455,12 +451,12 @@
       }
 
       if (queue->front == NULL)
-      { // empty queue
+      { 
          queue->front = newNode;
          queue->rear = newNode;
       }
       else
-      { // add to rear
+      { 
          queue->rear->next = newNode;
          newNode->prev = queue->rear;
          queue->rear = newNode;
@@ -497,18 +493,15 @@
 
       printf("Patient %d - %s removed from the queue.\n", temp->patientID, temp->name);
 
-      // Move front to next node
       queue->front = queue->front->next;
 
-      // If queue is not empty, update prev pointer
       if (queue->front != NULL) {
          queue->front->prev = NULL;
       } else {
-         // If queue becomes empty, rear should also be NULL
          queue->rear = NULL;
       }
 
-      free(temp); // free memory
+      free(temp);
       queue->size--;
    }
 
@@ -659,7 +652,6 @@
 
       struct emergencyNode *newNode;
       newNode = createEmergencyNode(patientID, emergencyScore);
-      // empty queue
       if (isEmergencyEmpty(queue) == 1)
       {
          queue->front = newNode;
@@ -667,7 +659,6 @@
          return;
       }
 
-      // non emepty queue
       struct emergencyNode *temp;
       temp = queue->rear;
       int enqueued = 0;
@@ -675,7 +666,6 @@
       {
          if (emergencyScore > temp->emergencyScore)
          {
-            // if temp has reached to front and want to add node to the front
             if (temp == queue->front)
             {
                temp->prev = newNode;
@@ -690,7 +680,6 @@
          }
          else
          {
-            // if new node is going to be attached to the rear
             if (temp == queue->rear)
             {
                newNode->prev = temp;
@@ -1547,8 +1536,6 @@
 
             if (strcmp(ptr->name, ptr->next->name) > 0)
             {
-
-               // Swap ONLY data (not pointers)
                int tempID = ptr->drugID;
                char tempName[50];
                int tempQty = ptr->quantity;
@@ -1638,7 +1625,7 @@
       if (temp == NULL)
       {
          printf("No drugs available in inventory.\n");
-         return; // Exit early since user can't order anything
+         return;
       }
       else{
 
@@ -1654,7 +1641,7 @@
       int pID;
       printf("\nEnter Patient ID: ");
       scanf("%d", &pID);
-      getchar(); // Consume trailing newline
+      getchar();
 
       char addMore;
       do
@@ -1669,7 +1656,6 @@
          printf("\nEnter Drug ID: ");
          scanf("%d", &dID);
 
-         // Validation: Find the drug name string by ID
          char dName[50] = "";
          temp = inventoryHead;
          int found = 0;
@@ -1691,11 +1677,10 @@
          } else {
             printf("Enter Quantity: ");
             scanf("%d", &qty);
-            getchar(); // Consume trailing newline
+            getchar(); 
 
             if (qty > 0)
             {
-               // Optional: Check if requested quantity is available in inventory before creating order
                temp = inventoryHead;
                while (temp != NULL)
                {
@@ -1705,7 +1690,7 @@
                      {
                         printf("Warning: Only %d units of %s available. Order quantity adjusted to available stock.\n",
                               temp->quantity, temp->name);
-                        qty = temp->quantity; // Adjust order quantity to available stock
+                        qty = temp->quantity;
                      }
                      break;
                   }
@@ -1715,12 +1700,12 @@
             else
             {
                printf("Invalid quantity! Order cancelled.\n");
-               continue; // Skip adding this order and ask if they want to add another
+               continue; 
             }
 
             pharmacyTop++;
-            pharmacyStack[pharmacyTop].patientID = pID;         // Assigned patient ID
-            strcpy(pharmacyStack[pharmacyTop].drugName, dName); // Still storing Name in order struct
+            pharmacyStack[pharmacyTop].patientID = pID;         
+            strcpy(pharmacyStack[pharmacyTop].drugName, dName); 
             pharmacyStack[pharmacyTop].quantity = qty;
             pharmacyStack[pharmacyTop].totalPrice = 0.0;
 
@@ -1729,7 +1714,7 @@
 
          printf("\nDo you want to add another drug? (Y/N): ");
          scanf(" %c", &addMore);
-         getchar(); // Consume trailing newline
+         getchar(); 
       } while (addMore == 'Y' || addMore == 'y');
    }
 
@@ -1873,7 +1858,7 @@
       }
 
       printf("\n====== PHARMACY ORDER HISTORY ======\n");
-      for (int i = pharmacyTop; i >= 0; i--) // Displaying from most recent to oldest
+      for (int i = pharmacyTop; i >= 0; i--) 
       {
          printf("Patient ID: %d | Drug: %s | Qty: %d | Total: %.2f\n",
                pharmacyStack[i].patientID,
@@ -1910,13 +1895,11 @@
 
       struct PharmacyOrder *lastOrder = &pharmacyStack[pharmacyTop];
 
-      // Optional: Provide a feature to add stock back to inventory if this order already deducted it.
-      // But since it's just canceling from the stack:
+      
 
       printf("Cancelled the last order for Patient %d (Drug: %s, Qty: %d).\n",
             lastOrder->patientID, lastOrder->drugName, lastOrder->quantity);
 
-      // Reduce the top counter to remove the order
       pharmacyTop--;
    }
 
@@ -1950,7 +1933,7 @@
     int patientId;
     printf("Enter patient ID: ");
     if (scanf("%d", &patientId) != 1) {
-        while(getchar() != '\n'); // Clear buffer
+        while(getchar() != '\n');
         printf("Invalid input.\n");
         return;
     }
@@ -1967,19 +1950,19 @@
         currentTr = currentTr->next;
     }
 
-   // 2. Calculate Pharmacy Costs from the Stack by looking up Inventory prices
+   
     for (int i = 0; i <= pharmacyTop; i++) {
         if (pharmacyStack[i].patientID == patientId) {
             struct Drug *tempInv = inventoryHead;
             int found = 0;
 
-            // Find the drug in inventory to get the current unit price
+           
             while (tempInv != NULL) {
                 if (strcmp(tempInv->name, pharmacyStack[i].drugName) == 0) {
                     float itemTotal = tempInv->unitPrice * pharmacyStack[i].quantity;
                     totalPharmacyCost += itemTotal;
                     
-                    // Update the stack record so displayOrders() shows the correct price later
+                   
                     pharmacyStack[i].totalPrice = itemTotal;
                     found = 1;
                     break;
@@ -1995,13 +1978,13 @@
 
     float grandTotal = totalTreatmentCost + totalPharmacyCost;
 
-    // 3. Store the Bill
+    
     bills[billCount].billID = nextBillID++;
     bills[billCount].patientID = patientId;
     bills[billCount].amount = grandTotal;
     strcpy(bills[billCount].paymentStatus, "Unpaid");
 
-    // 4. Detailed Output for the user
+   
     printf("\n--- Bill Summary for Patient %d ---\n", patientId);
     printf("Total Treatment Cost:  %.2f\n", totalTreatmentCost);
     printf("Total Pharmacy Cost:   %.2f\n", totalPharmacyCost);
@@ -2177,9 +2160,8 @@ void masterWorkflow() {
         printf("Enter Gender (M/F): "); scanf("%s", gender);
         printf("Enter Contact: "); scanf("%s", contact);
         
-        // Registering patient
         addPatient(name, age, gender, contact);
-        pID = patientCount; // Newest patient
+        pID = patientCount; 
     } else {
         printf("Enter Patient ID: ");
         scanf("%d", &pID);
@@ -2202,7 +2184,7 @@ void masterWorkflow() {
     printf("\n--- STEP 3: CONSULTATION & TREATMENT ---\n");
     printf("Processing consultation for the next available patient...\n");
     
-    // Check emergency first, then standard
+   
     if (!isEmergencyEmpty(&EMERGENCY_QUEUE)) {
         dequeueEmergency(&EMERGENCY_QUEUE);
     } else {
@@ -2212,20 +2194,20 @@ void masterWorkflow() {
     printf("Is treatment required? (1 for Yes, 0 for No): ");
     scanf("%d", &choice);
     if (choice == 1) {
-        treatmentCost = addTreatment(); // Records in Singly Linked List
+        treatmentCost = addTreatment(); 
     }
 
     printf("\n--- STEP 4: PHARMACY & INVENTORY ---\n");
     printf("Does the patient need medication? (1 for Yes, 0 for No): ");
     scanf("%d", &choice);
     if (choice == 1) {
-        createOrder(); // Pushes to Stack
+        createOrder(); 
         calculatePrice();
         updateInventoryAfterSale();
     }
 
     printf("\n--- STEP 5: BILLING & DISCHARGE ---\n");
-    generateBill(); // Manual entry based on calculated costs above
+    generateBill(); 
     printf("Patient Journey Completed. Returning to main menu.\n");
 }
 
@@ -2413,7 +2395,7 @@ void masterWorkflow() {
                switch (choice)
                {
                case 1:
-                  // int empty = isEmergencyEmpty(&EMERGENCY_QUEUE);
+                  
                   if (isEmergencyEmpty(&EMERGENCY_QUEUE))
                   {
                      printf("Emergency queue is empty\n");
@@ -2438,7 +2420,7 @@ void masterWorkflow() {
                   if (scanf(" %d", &emergencyScore) != 1)
                   {
                      int ch;
-                     /* Clear invalid input from the buffer */
+                     
                      while ((ch = getchar()) != '\n' && ch != EOF)
                      {
                      }
